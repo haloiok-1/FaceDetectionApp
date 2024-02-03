@@ -1,10 +1,14 @@
+#IntelliJ IDEA files
 /shelf/
 /workspace.xml
 
-img/IDPhoto.png
-Help
+#Folders
 Resources/faces
 Resources/Video
+Help
+
+#Files
 trainner.yml
 labels.pickle
 
+/Testfolder/
