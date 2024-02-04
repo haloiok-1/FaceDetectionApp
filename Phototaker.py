@@ -1,5 +1,6 @@
 import os
 import tkinter as tk
+from tkinter import messagebox
 from PIL import Image, ImageTk
 import cv2
 import threading
@@ -16,7 +17,7 @@ class Phototaker:
 
         # Create a window
         self.window = tk.Tk()
-        self.window.title("Camera Stream with tkinter")
+        self.window.title("Photo Taker")
 
         # Create a label to display the camera stream
         self.video_label = tk.Label(self.window)
@@ -24,15 +25,23 @@ class Phototaker:
 
         # Create a button to take photos
         self.photo_button = tk.Button(self.window, text="Take Photos", command=self.take_photos,
-                                      padx=20, pady=10, background="red")
-        # pack the button in the center of the window
-        self.photo_button.pack()
+                                      padx=20, pady=10)
+        # pack the button to the left of the window
+        self.photo_button.pack(side="left")
 
-
+        # button profile pic
+        self.profile_pic_button = tk.Button(self.window, text="Set Profile Picture", command=self.set_profile_pic,
+                                           padx=20, pady=10)
+        self.profile_pic_button.pack(side="right")
 
         # label for amount of photos in folder
-        self.amount_of_photos_label = tk.Label(self.window, text=f"Amount of photos: {self.current_amount_of_photos()}")
+        self.amount_of_photos_label = tk.Label(self.window, text=f"Amount of photos: {self.current_amount_of_photos()}",
+                                               padx=20, pady=10, font=("Arial", 14))
         self.amount_of_photos_label.pack()
+
+        # create close button
+        self.close_button = tk.Button(self.window, text="Close", command=self.window.quit, padx=20, pady=10)
+        self.close_button.pack()
 
         self.display_camera_stream()
 
@@ -46,6 +55,7 @@ class Phototaker:
     def display_camera_stream(self):
         # Capture frame-by-frame
         ret, frame = self.camera.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Convert the frame to a PIL Image
         img = Image.fromarray(frame)
@@ -55,7 +65,7 @@ class Phototaker:
         self.video_label.config(image=img_tk)
         self.video_label.image = img_tk
 
-        self.amount_of_photos_label.config(text=f"Amount of photos: {self.current_amount_of_photos()}")
+        self.amount_of_photos_label.config(text=f"Amount of Photos: {self.current_amount_of_photos()}")
 
         # Call the function again after 10 milliseconds
         self.window.after(10, self.display_camera_stream)
@@ -87,6 +97,17 @@ class Phototaker:
 
     def current_amount_of_photos(self):
         return len(os.listdir(self.photo_directory))
+
+    def set_profile_pic(self):
+        # create profile pic if it doesn't exist
+        ret, frame = self.camera.read()
+        if not ret:
+            messagebox.showerror("Error", "Couldn't take a photo")
+
+        profile_pic_path = f"{self.photo_directory}/profile_pic.jpg"
+        cv2.imwrite(profile_pic_path, frame)
+        self.current_person.profile_pic_path = profile_pic_path
+        print(f"Profile picture set to {profile_pic_path}")
 
 
 
