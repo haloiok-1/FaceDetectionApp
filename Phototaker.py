@@ -8,7 +8,8 @@ from Person import Person
 
 
 class Phototaker:
-    def __init__(self, person, directory_path):
+    def __init__(self, parent, person: Person, directory_path: str):
+
         self.counter = 0
         self.current_person = person
         self.photo_directory = person.photo_folder_path
@@ -16,7 +17,7 @@ class Phototaker:
         self.camera = cv2.VideoCapture(0)
 
         # Create a window
-        self.window = tk.Tk()
+        self.window = tk.Toplevel(parent)
         self.window.title("Photo Taker")
 
         # Create a label to display the camera stream
@@ -31,7 +32,7 @@ class Phototaker:
 
         # button profile pic
         self.profile_pic_button = tk.Button(self.window, text="Set Profile Picture", command=self.set_profile_pic,
-                                           padx=20, pady=10)
+                                            padx=20, pady=10)
         self.profile_pic_button.pack(side="right")
 
         # label for amount of photos in folder
@@ -39,14 +40,16 @@ class Phototaker:
                                                padx=20, pady=10, font=("Arial", 14))
         self.amount_of_photos_label.pack()
 
-        # create close button
-        self.close_button = tk.Button(self.window, text="Close", command=self.window.quit, padx=20, pady=10)
+        # create close button to close only this window
+        self.close_button = tk.Button(self.window, text="Close", command=self.window.destroy, padx=20, pady=10)
         self.close_button.pack()
 
-        self.display_camera_stream()
-
+    def start(self):
+        print(f"Starting the photo taker for {self.current_person.name} {self.current_person.lastname}")
+        # Start the camera stream
+        threading.Thread(target=self.display_camera_stream).start()
         self.window.mainloop()
-
+        # Start the tkinter main loop
         # Release the camera resources
         self.camera.release()
         cv2.destroyAllWindows()
@@ -56,6 +59,10 @@ class Phototaker:
         # Capture frame-by-frame
         ret, frame = self.camera.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        if not ret:
+            print("No frame available")
+            return
 
         # Convert the frame to a PIL Image
         img = Image.fromarray(frame)
@@ -110,8 +117,6 @@ class Phototaker:
         print(f"Profile picture set to {profile_pic_path}")
 
 
-
-
 if __name__ == "__main__":
     p = Person(
         name="John",
@@ -122,3 +127,4 @@ if __name__ == "__main__":
         photo_folder_path="Resources/Persons/John_Doe",
     )
     pt = Phototaker(p, "Resources/Persons")
+    pt.start()
