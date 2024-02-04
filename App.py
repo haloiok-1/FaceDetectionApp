@@ -3,12 +3,14 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import json
 from Person import Person
+from Phototaker import Phototaker
+import threading
 
 
 class App:
     def __init__(self, master):
         # Variables
-        current_person = None
+        self.current_person = None
         self.photo_directory = None
         self.working_directory = "Resources/Persons/"
         self.master = master
@@ -70,8 +72,8 @@ class App:
         self.label_takePhotos = tk.Label(right_frame, text="Fotos aufnehmen")
         self.label_takePhotos.pack(pady=(20, 10))  # Add some padding above and below the label
 
-        self.photo_button = tk.Button(right_frame, text="Start Shooting", command="self.takePhotos",
-                                      padx=20, pady=10, state="disabled")
+        self.photo_button = tk.Button(right_frame, text="Start Shooting", command=self.start_Phototaker,
+                                      padx=20, pady=10)
         self.photo_button.pack()
 
         # Create a button to change the working directory
@@ -80,7 +82,16 @@ class App:
         self.wd_button.place(relx=1.0, rely=1.0, anchor=tk.SE)
 
     def submit(self):
-        current_person = Person(
+        # check if folder with name already exists
+        if os.path.exists(self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
+            messagebox.showinfo("Already Exists", "A folder with this name already exists", icon="info")
+            self.photo_button.config(state="normal")
+            return
+        else:
+            photo_directory = self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()
+            os.mkdir(self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
+
+        self.current_person = Person(
             name=self.entry_firstname.get(),
             lastname=self.entry_lastname.get(),
             age=self.entry_age.get(),
@@ -127,10 +138,11 @@ class App:
             self.working_directory = working_directory
             self.wd_button.config(text=working_directory)
 
-    def saveInJSON(self, folder_path):
+    def saveInJSON(self, folder_path, person_folder_path):
         # open file to read and write in json format
         person_dict = {"firstname": self.entry_firstname.get(), "lastname": self.entry_lastname.get(),
-                       "age": self.entry_age.get(), "gender": self.entry_gender.cget("text")}
+                       "age": self.entry_age.get(), "gender": self.entry_gender.cget("text"),
+                       "profile_pic_path": "", "photo_folder_path": person_folder_path}
 
         try:
             with open(folder_path + "persons.json", "r") as f:
@@ -155,9 +167,16 @@ class App:
                 f.write(",\n}")
                 print(f"Informationen erfolgreich in {f} gespeichert.")
 
-
     def start_Phototaker(self):
-        pass
+        print("Starting Phototaker")
+
+        # print all information of the current person
+        print(self.current_person.photo_folder_path)
+
+        print(self.working_directory)
+        pt = Phototaker(self.master, self.current_person, self.working_directory)
+        pt.start()
+
 
 # Create the main window
 if __name__ == "__main__":
