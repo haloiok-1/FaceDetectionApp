@@ -1,6 +1,7 @@
 #IntelliJ IDEA files
 /shelf/
 /workspace.xml
+.idea
 
 #Folders
 Resources/faces
