@@ -10,6 +10,7 @@ class Person:
         self.profile_pic_path = profile_pic_path
         self.photo_folder_path = photo_folder_path
 
+    def verify(self):
         # Verify that the profile picture exists
         if not os.path.isfile(self.profile_pic_path):
             raise ValueError(f"Invalid profile picture path: {self.profile_pic_path}")
@@ -28,13 +29,13 @@ class Person:
         print(self)
 
 
-# Example usage
-p = Person(
-    name="John",
-    lastname="Doe",
-    age=30,
-    gender="male",
-    profile_pic_path="path/to/profile.jpg",
-    photo_folder_path="path/to/photo/folder",
-)
-p.display_info()
+if __name__ == "__main__":
+    p = Person(
+        name="John",
+        lastname="Doe",
+        age=30,
+        gender="male",
+        profile_pic_path="path/to/profile.jpg",
+        photo_folder_path="path/to/photo/folder",
+    )
+    print(p)
