@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import json
 
 
 class App:
     def __init__(self, master):
         # Variables
         self.photo_directory = None
+        self.working_directory = "Resources/Persons/"
         self.master = master
 
         master.title("Person Detector")
@@ -18,7 +20,6 @@ class App:
         # Create a frame for the right column
         right_frame = tk.Frame(master)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-
 
         # Add the labels and entries to the left frame
         self.label_information_title = tk.Label(left_frame, text="Information", font=("Arial", 16, "bold"))
@@ -60,12 +61,41 @@ class App:
         gender = self.entry_gender.get()
 
         print(f"Name: {name}, Age: {age}, Gender: {gender}")
+        self.saveInJSON(self.working_directory)
 
     def change_directory(self):
         working_directory = tk.filedialog.askdirectory()
         if working_directory:
             print(f"Working directory changed to: {working_directory}")
-            self.photo_directory = working_directory
+            self.working_directory = working_directory
+
+    def saveInJSON(self, folder_path):
+        # open file to read and write in json format
+        person_dict = {"name": self.entry_name.get(), "age": self.entry_age.get(),
+                       "gender": self.entry_gender.get()}
+
+        try:
+            with open(folder_path + "persons.json", "r") as f:
+                lines = f.readlines()
+
+            del lines[-1]
+
+            with open(folder_path + "persons.json", "w") as f:
+                print(lines)
+                f.writelines(lines)
+                f.writelines(json.dumps(person_dict))
+                f.write(",\n")
+                f.write("}")
+                print(f"Informationen erfolgreich in {f} gespeichert.")
+
+        except Exception as e:
+            print(e)
+            with open(folder_path + "persons.json", "a") as f:
+                f.write("{\n")
+                f.write("    \"Version\": \"1.0\",\n")
+                json.dump(person_dict, f)
+                f.write(",\n}")
+                print(f"Informationen erfolgreich in {f} gespeichert.")
 
 
 # Create the main window
