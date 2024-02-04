@@ -73,7 +73,7 @@ class App:
         self.label_takePhotos.pack(pady=(20, 10))  # Add some padding above and below the label
 
         self.photo_button = tk.Button(right_frame, text="Start Shooting", command=self.start_Phototaker,
-                                      padx=20, pady=10)
+                                      padx=20, pady=10, state="disabled")
         self.photo_button.pack()
 
         # Create a button to change the working directory
