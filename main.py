@@ -45,7 +45,7 @@ with open("labels.pickle", "rb") as f:
 while (True):
     success, img = cap.read()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascades.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
+    faces = face_cascades.detectMultiScale(gray, scaleFactor=2, minNeighbors=5)
 
     for (x, y, w, h) in faces:
         # print(x, y, w, h)
