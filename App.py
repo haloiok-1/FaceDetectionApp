@@ -133,7 +133,7 @@ class App:
 
 
         print(f"Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
-        # self.saveInJSON(self.working_directory)
+        self.saveInJSON()
         # os.mkdir(self.working_directory + firstname + "_" + lastname)
         self.photo_button.config(state="normal", borderwidth=5, relief="raised")
 
@@ -146,15 +146,13 @@ class App:
             self.wd_button.config(text=working_directory)
 
     def saveInJSON(self):
-        person_folder_path = "Resources/Persons/John_Doe"
-        folder_path = "Resources/Persons/"
         # open file to read and write in json format
         person_dict = {"firstname": self.current_person.name, "lastname": self.current_person.lastname,
                        "age": self.current_person.age, "gender": self.current_person.gender,
                        "profile_pic_path": "", "photo_folder_path": self.current_person.photo_folder_path}
 
         try:
-            with open(folder_path + "persons.json", "r") as f:
+            with open(self.working_directory + "persons.json", "r") as f:
                 lines = f.readlines()
 
             del lines[-1]
@@ -163,7 +161,7 @@ class App:
             last_line = last_line[:-1] + "," + "\n"
             lines[-1] = last_line
 
-            with open(folder_path + "persons.json", "w") as f:
+            with open(self.working_directory + "persons.json", "w") as f:
                 print(lines)
                 f.writelines(lines)
                 # write the new person information
@@ -175,7 +173,7 @@ class App:
         except Exception as e:
             print(e)
             print("File not found. Creating new file.")
-            with open(folder_path + "persons.json", "a") as f:
+            with open(self.working_directory + "persons.json", "a") as f:
                 f.write("[\n")
                 json.dump(person_dict, f, indent=4)
                 f.write("\n]")
