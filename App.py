@@ -28,6 +28,8 @@ class App:
             "Prefer not to say",
         ]
 
+
+
         master.title("Person Detector")
         master.geometry("500x400")  # Setzt die Größe des Fensters auf 600x400 Pixel
 
@@ -81,6 +83,12 @@ class App:
                                    compound=tk.LEFT)
         self.wd_button.place(relx=1.0, rely=1.0, anchor=tk.SE)
 
+        #check if working directory exists
+        if not os.path.exists(self.working_directory):
+            os.mkdir(self.working_directory)
+
+
+
     def submit(self):
         # check if folder with name already exists
         if os.path.exists(self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
@@ -123,7 +131,6 @@ class App:
         if not messagebox.askyesno("Submit", "Do you really want to submit?"):
             return
 
-        print(gender)
 
         print(f"Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
         # self.saveInJSON(self.working_directory)
@@ -183,3 +190,4 @@ if __name__ == "__main__":
     window = tk.Tk()
     app = App(window)
     window.mainloop()
+
