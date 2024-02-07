@@ -28,6 +28,8 @@ class App:
             "Prefer not to say",
         ]
 
+
+
         master.title("Person Detector")
         master.geometry("500x400")  # Setzt die Größe des Fensters auf 600x400 Pixel
 
@@ -81,6 +83,12 @@ class App:
                                    compound=tk.LEFT)
         self.wd_button.place(relx=1.0, rely=1.0, anchor=tk.SE)
 
+        #check if working directory exists
+        if not os.path.exists(self.working_directory):
+            os.mkdir(self.working_directory)
+
+
+
     def submit(self):
         # check if folder with name already exists
         if os.path.exists(self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
@@ -123,10 +131,9 @@ class App:
         if not messagebox.askyesno("Submit", "Do you really want to submit?"):
             return
 
-        print(gender)
 
         print(f"Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
-        # self.saveInJSON(self.working_directory)
+        self.saveInJSON()
         # os.mkdir(self.working_directory + firstname + "_" + lastname)
         self.photo_button.config(state="normal", borderwidth=5, relief="raised")
 
@@ -138,33 +145,38 @@ class App:
             self.working_directory = working_directory
             self.wd_button.config(text=working_directory)
 
-    def saveInJSON(self, folder_path, person_folder_path):
+    def saveInJSON(self):
         # open file to read and write in json format
-        person_dict = {"firstname": self.entry_firstname.get(), "lastname": self.entry_lastname.get(),
-                       "age": self.entry_age.get(), "gender": self.entry_gender.cget("text"),
-                       "profile_pic_path": "", "photo_folder_path": person_folder_path}
+        person_dict = {"firstname": self.current_person.name, "lastname": self.current_person.lastname,
+                       "age": self.current_person.age, "gender": self.current_person.gender,
+                       "profile_pic_path": "", "photo_folder_path": self.current_person.photo_folder_path}
 
         try:
-            with open(folder_path + "persons.json", "r") as f:
+            with open(self.working_directory + "persons.json", "r") as f:
                 lines = f.readlines()
 
             del lines[-1]
+            last_line = lines[-1]
+            ## add to the penultimate line a comma
+            last_line = last_line[:-1] + "," + "\n"
+            lines[-1] = last_line
 
-            with open(folder_path + "persons.json", "w") as f:
+            with open(self.working_directory + "persons.json", "w") as f:
                 print(lines)
                 f.writelines(lines)
-                f.writelines(json.dumps(person_dict))
-                f.write(",\n")
-                f.write("}")
+                # write the new person information
+                json.dump(person_dict, f, indent=4)
+                f.write("\n]")
                 print(f"Informationen erfolgreich in {f} gespeichert.")
+
 
         except Exception as e:
             print(e)
-            with open(folder_path + "persons.json", "a") as f:
-                f.write("{\n")
-                f.write("    \"Version\": \"1.0\",\n")
-                json.dump(person_dict, f)
-                f.write(",\n}")
+            print("File not found. Creating new file.")
+            with open(self.working_directory + "persons.json", "a") as f:
+                f.write("[\n")
+                json.dump(person_dict, f, indent=4)
+                f.write("\n]")
                 print(f"Informationen erfolgreich in {f} gespeichert.")
 
     def start_Phototaker(self):
@@ -183,3 +195,4 @@ if __name__ == "__main__":
     window = tk.Tk()
     app = App(window)
     window.mainloop()
+
