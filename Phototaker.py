@@ -7,14 +7,19 @@ import threading
 from Person import Person
 
 
+# import mtcnn
+
+
 class Phototaker:
     def __init__(self, parent, person: Person, directory_path: str):
 
+        # self.mtcnn_detector = mtcnn.MTCNN()
         self.counter = 0
         self.current_person = person
         self.photo_directory = person.photo_folder_path
         self.working_directory = directory_path
         self.camera = cv2.VideoCapture(0)
+        self.is_Shooting = False
 
         # Create a window
         self.window = tk.Toplevel(parent)
@@ -60,9 +65,55 @@ class Phototaker:
         ret, frame = self.camera.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
+        # draw broder around region of interest
+        # center of the camera feed
+
+
+        ############################################################################################################
+        x = len(frame[0]) // 2
+        y = len(frame) // 2
+        w, h = 200, 200
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        ############################################################################################################
+
         if not ret:
             print("No frame available")
             return
+
+        # Load a pre-trained Haar Cascade model for face detection
+        face_cascade = cv2.CascadeClassifier("Resources/Cascades/data/haarcascade_frontalface_default.xml")
+
+        # Convert the frame to grayscale
+        gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+
+        # Detect faces in the frame
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.4, minNeighbors=4, minSize=(30, 30))
+        # faces = self.mtcnn_detector.detect_faces(frame)
+
+        # Draw a green or red box around each detected face
+        for (x, y, w, h) in faces:
+            if len(faces) == 1:
+                # Enable the photo button if only one face is detected
+                self.photo_button.config(state="normal")
+                self.profile_pic_button.config(state="normal")
+
+                if self.is_Shooting:
+                    # Draw a red rectangle around the face if the camera is shooting
+                    color = (255, 0, 0)  # red
+                else:
+                    # Draw a green rectangle around the face if the camera is not shooting and only one face is detected
+                    color = (0, 255, 0)  # green
+            else:
+                # Disable the photo button if more than one face is detected
+                self.photo_button.config(state="disabled")
+                self.profile_pic_button.config(state="disabled")
+                # Draw a blue rectangle around the face if the camera is not shooting and more than one face is detected
+                color = (0, 0, 255)  # blue
+            cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+
+        if len(faces) == 0:
+            self.photo_button.config(state="disabled")
+            self.profile_pic_button.config(state="disabled")
 
         # Convert the frame to a PIL Image
         img = Image.fromarray(frame)
@@ -84,6 +135,7 @@ class Phototaker:
         self.photo_button.config(text="Taking Photos...", state="disabled", background="grey")
 
     def worker_take_photos(self):
+        self.is_Shooting = True
         counter = self.counter
 
         # check if the directory exists
@@ -98,6 +150,7 @@ class Phototaker:
             print(f"Photo {self.counter} saved to {photo_path}")
 
         self.photo_button.config(text="Take Photos", state="normal")
+        self.is_Shooting = False
 
     def save_photos(self):
         pass
@@ -126,5 +179,5 @@ if __name__ == "__main__":
         profile_pic_path="path/to/profile.jpg",
         photo_folder_path="Resources/Persons/John_Doe",
     )
-    pt = Phototaker(p, "Resources/Persons")
+    pt = Phototaker(tk.Tk(), p, "Resources/Persons/")
     pt.start()
