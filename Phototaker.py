@@ -14,6 +14,7 @@ class Phototaker:
     def __init__(self, parent, person: Person, directory_path: str):
 
         # self.mtcnn_detector = mtcnn.MTCNN()
+        self.roi = None
         self.counter = 0
         self.current_person = person
         self.photo_directory = person.photo_folder_path
@@ -65,14 +66,17 @@ class Phototaker:
         ret, frame = self.camera.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
+        # flip the frame
+        frame = cv2.flip(frame, 1)
+
         # draw broder around region of interest
         # center of the camera feed
 
-
         ############################################################################################################
-        x = len(frame[0]) // 2
-        y = len(frame) // 2
+        x = 230
+        y = 150
         w, h = 200, 200
+        self.roi = (x, y, w, h)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
         ############################################################################################################
 
@@ -87,15 +91,17 @@ class Phototaker:
         gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
         # Detect faces in the frame
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.4, minNeighbors=4, minSize=(30, 30))
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5, minSize=(30, 30))
         # faces = self.mtcnn_detector.detect_faces(frame)
 
         # Draw a green or red box around each detected face
         for (x, y, w, h) in faces:
             if len(faces) == 1:
-                # Enable the photo button if only one face is detected
-                self.photo_button.config(state="normal")
-                self.profile_pic_button.config(state="normal")
+                # check if only one face is in the region of interest
+                if (x > self.roi[0] and y > self.roi[1] and x + w < self.roi[0]
+                        + self.roi[2] and y + h < self.roi[1] + self.roi[3]):
+                    self.photo_button.config(state="normal")
+                    self.profile_pic_button.config(state="normal")
 
                 if self.is_Shooting:
                     # Draw a red rectangle around the face if the camera is shooting
@@ -105,8 +111,6 @@ class Phototaker:
                     color = (0, 255, 0)  # green
             else:
                 # Disable the photo button if more than one face is detected
-                self.photo_button.config(state="disabled")
-                self.profile_pic_button.config(state="disabled")
                 # Draw a blue rectangle around the face if the camera is not shooting and more than one face is detected
                 color = (0, 0, 255)  # blue
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
@@ -145,7 +149,8 @@ class Phototaker:
         while self.counter < counter + 100:
             ret, frame = self.camera.read()
             photo_path = f"{self.photo_directory}/photo_{self.counter}.jpg"
-            cv2.imwrite(photo_path, frame)
+            #write the roi to the photo and save it
+            cv2.imwrite(photo_path, frame[self.roi[1]:self.roi[1] + self.roi[3], self.roi[0]:self.roi[0] + self.roi[2]])
             self.counter += 1
             print(f"Photo {self.counter} saved to {photo_path}")
 

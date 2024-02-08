@@ -44,8 +44,12 @@ with open("labels.pickle", "rb") as f:
 
 while (True):
     success, img = cap.read()
+
+    #flip the frame
+    img = cv2.flip(img, 1)
+
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascades.detectMultiScale(gray, scaleFactor=2, minNeighbors=5)
+    faces = face_cascades.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5, minSize=(30, 30))
 
     for (x, y, w, h) in faces:
         # print(x, y, w, h)
