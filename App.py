@@ -1,10 +1,11 @@
 import os
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 import json
 from Person import Person
 from Phototaker import Phototaker
 import threading
+from FaceRecognizer import FaceRecognizer as fr
 
 
 class App:
@@ -26,9 +27,8 @@ class App:
             "Intersex",
             "Two-Spirit",
             "Prefer not to say",
+            "Attack Helicopter"
         ]
-
-
 
         master.title("Person Detector")
         master.geometry("500x400")  # Setzt die Größe des Fensters auf 600x400 Pixel
@@ -83,11 +83,19 @@ class App:
                                    compound=tk.LEFT)
         self.wd_button.place(relx=1.0, rely=1.0, anchor=tk.SE)
 
-        #check if working directory exists
+        self.training_label = tk.Label(right_frame, text="Face Training")
+        self.training_label.pack(pady=(20, 0))
+        self.training_button = tk.Button(right_frame, text="Start Training", command=self.start_face_training,
+                                         padx=20, pady=5)
+        self.training_button.pack()
+
+        self.progress = ttk.Progressbar(right_frame, orient="horizontal", length=150, mode="determinate")
+        self.progress.pack(pady=(10, 20))
+
+
+        # check if working directory exists
         if not os.path.exists(self.working_directory):
             os.mkdir(self.working_directory)
-
-
 
     def submit(self):
         # check if folder with name already exists
@@ -130,7 +138,6 @@ class App:
         # ask if really want to submit
         if not messagebox.askyesno("Submit", "Do you really want to submit?"):
             return
-
 
         print(f"Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
         self.saveInJSON()
@@ -189,10 +196,26 @@ class App:
         pt = Phototaker(self.master, self.current_person, self.working_directory)
         pt.start()
 
+    def start_face_training(self):
+        print("Starting Face Training")
+        face_recognizer = fr(self.working_directory,
+                             "Resources/Cascades/data/haarcascade_frontalface_default.xml")
+        face_recognizer.process()
+
+        # progress bar
+        # get amount of training photos
+        amount_of_photos = len(os.listdir(self.working_directory))
+        self.progress["maximum"] = amount_of_photos
+        self.progress["value"] = 0
+        self.progress.start(1)
+
+
+
+        print("Face Training complete")
+
 
 # Create the main window
 if __name__ == "__main__":
     window = tk.Tk()
     app = App(window)
     window.mainloop()
-
