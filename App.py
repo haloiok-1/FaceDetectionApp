@@ -11,6 +11,7 @@ from FaceRecognizer import FaceRecognizer as fr
 class App:
     def __init__(self, master):
         # Variables
+        self.amount_of_photos = 0
         self.current_person = None
         self.photo_directory = None
         self.working_directory = "Resources/Persons/"
@@ -90,7 +91,10 @@ class App:
         self.training_button.pack()
 
         self.progress = ttk.Progressbar(right_frame, orient="horizontal", length=150, mode="determinate")
-        self.progress.pack(pady=(10, 20))
+        self.progress.pack(pady=(10, 5))
+
+        self.trainingstatus_label = tk.Label(right_frame, text="")
+        self.trainingstatus_label.pack()
 
 
         # check if working directory exists
@@ -200,18 +204,36 @@ class App:
         print("Starting Face Training")
         face_recognizer = fr(self.working_directory,
                              "Resources/Cascades/data/haarcascade_frontalface_default.xml")
-        face_recognizer.process()
+        threading.Thread(target=self.worker_face_training, args=(face_recognizer,)).start()
+        # face_recognizer.process()
 
         # progress bar
         # get amount of training photos
-        amount_of_photos = len(os.listdir(self.working_directory))
-        self.progress["maximum"] = amount_of_photos
+        amount_of_photos = 0
+        self.amout_of_photos()
+        amount_of_photos = self.amount_of_photos
+        #print(amount_of_photos)
+
+        self.progress["maximum"] = amount_of_photos + 3
         self.progress["value"] = 0
-        self.progress.start(1)
 
+        while self.progress["value"] < self.progress["maximum"]:
+            self.progress["value"] = face_recognizer.getTrainingStatus()
+            self.master.update_idletasks()
+            self.master.update()
 
+            # update the label with the precentage of the training
+            self.trainingstatus_label.config(text=f"Training Status: {int(100 * self.progress['value'] / self.progress['maximum'])}%")
 
+    def worker_face_training(self, face_recognizer):
+        face_recognizer.process()
         print("Face Training complete")
+
+    def amout_of_photos(self):
+        for root, dirs, files in os.walk(self.working_directory):
+            for file in files:
+                if file.endswith("jpg"):
+                    self.amount_of_photos += 1
 
 
 # Create the main window
