@@ -20,6 +20,7 @@ class Phototaker:
         self.photo_directory = person.photo_folder_path
         self.working_directory = directory_path
         self.camera = cv2.VideoCapture(0)
+        self.camera.set(cv2.CAP_PROP_FPS, 60)
         self.is_Shooting = False
 
         # Create a window
@@ -67,18 +68,13 @@ class Phototaker:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # flip the frame
-        frame = cv2.flip(frame, 1)
+        frame = (cv2.flip(frame, 1))
 
-        # draw broder around region of interest
         # center of the camera feed
-
-        ############################################################################################################
-        x = 230
-        y = 150
-        w, h = 200, 200
-        self.roi = (x, y, w, h)
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        ############################################################################################################
+        self.roi = (230, 150, 200, 200)
+        # draw broder around region of interest
+        cv2.rectangle(frame, (self.roi[0], self.roi[1]), (self.roi[0] + self.roi[2], self.roi[1] + self.roi[3]),
+                      (255, 0, 0), 2)
 
         if not ret:
             print("No frame available")
@@ -149,7 +145,9 @@ class Phototaker:
         while self.counter < counter + 100:
             ret, frame = self.camera.read()
             photo_path = f"{self.photo_directory}/photo_{self.counter}.jpg"
-            #write the roi to the photo and save it
+            # flip the frame
+            frame = cv2.flip(frame, 1)
+            # write the roi to the photo and save it
             cv2.imwrite(photo_path, frame[self.roi[1]:self.roi[1] + self.roi[3], self.roi[0]:self.roi[0] + self.roi[2]])
             self.counter += 1
             print(f"Photo {self.counter} saved to {photo_path}")
