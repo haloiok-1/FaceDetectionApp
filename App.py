@@ -2,6 +2,8 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import json
+
+from FaceDetector import FaceDetector
 from Person import Person
 from Phototaker import Phototaker
 import threading
@@ -96,6 +98,20 @@ class App:
 
         self.trainingstatus_label = tk.Label(right_frame, text="")
         self.trainingstatus_label.pack()
+
+        # add a separator
+        separator = ttk.Separator(right_frame, orient="horizontal")
+        separator.pack(fill="x", pady=10)
+
+        # label with headline for the face detection
+        self.label_face_detection = tk.Label(right_frame, text="Face Detection", font=("Arial", 16, "bold"))
+        self.label_face_detection.pack(pady=(10, 0))
+
+        # button to start the face detection
+        self.face_detection_button = tk.Button(right_frame, text="Start Face Detection",
+                                               command=self.start_facedetector,
+                                               padx=20, pady=10)
+        self.face_detection_button.pack()
 
         # check if working directory exists
         if not os.path.exists(self.working_directory):
@@ -242,6 +258,11 @@ class App:
     def worker_face_training(self, face_recognizer):
         self.trainingError = face_recognizer.process()
         return self.trainingError, print("Training complete")
+
+    def start_facedetector(self):
+        print("Starting Face Detector")
+        fd = FaceDetector(self.master, self.working_directory)
+        fd.start()
 
     def amout_of_photos(self):
         for root, dirs, files in os.walk(self.working_directory):
