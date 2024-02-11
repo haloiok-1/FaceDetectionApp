@@ -224,7 +224,7 @@ class App:
 
     def start_face_training(self):
         print("[App]: Starting Face Training")
-        face_recognizer = Trainer(self.photo_directory,
+        face_recognizer = Trainer(self.working_directory, self.photo_directory,
                                   "Resources/Cascades/data/haarcascade_frontalface_default.xml")
         threading.Thread(target=self.worker_face_training, args=(face_recognizer,)).start()
 
