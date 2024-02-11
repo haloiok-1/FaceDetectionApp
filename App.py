@@ -105,6 +105,9 @@ class App:
         # check if working directory exists
         if not os.path.exists(self.working_directory):
             os.mkdir(self.working_directory)
+
+        # check if photo directory exists
+        if not os.path.exists(self.photo_directory):
             os.mkdir(self.photo_directory)
 
     def submit(self):
