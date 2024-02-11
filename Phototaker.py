@@ -7,9 +7,6 @@ import threading
 from Person import Person
 
 
-# import mtcnn
-
-
 class Phototaker:
     def __init__(self, parent, person: Person, directory_path: str):
 
@@ -87,8 +84,7 @@ class Phototaker:
         gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
         # Detect faces in the frame
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5, minSize=(30, 30))
-        # faces = self.mtcnn_detector.detect_faces(frame)
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=1, minSize=(50, 50))
 
         # Draw a green or red box around each detected face
         for (x, y, w, h) in faces:
@@ -109,6 +105,7 @@ class Phototaker:
                 # Disable the photo button if more than one face is detected
                 # Draw a blue rectangle around the face if the camera is not shooting and more than one face is detected
                 color = (0, 0, 255)  # blue
+
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
 
         if len(faces) == 0:
