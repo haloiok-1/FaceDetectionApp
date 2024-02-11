@@ -6,8 +6,9 @@ import cv2
 
 
 class Trainer:
-    def __init__(self, image_dir, cascade_path):
+    def __init__(self,working_dir, image_dir, cascade_path):
         self.amount_of_photos = 0
+        self.working_dir = working_dir
         self.image_dir = image_dir
         self.face_cascades = cv2.CascadeClassifier(cascade_path)
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -41,6 +42,9 @@ class Trainer:
                     faces = self.face_cascades.detectMultiScale(image_array, scaleFactor=1.2, minNeighbors=3,
                                                                 minSize=(30, 30))
 
+                    # update the training status for the GUI
+                    self.trainingStatus += 1
+
                     # if no faces are detected, skip the image
                     if len(faces) == 0:
                         # print the image path and the amount of faces detected
@@ -62,9 +66,6 @@ class Trainer:
                         self.x_train.append(roi)
                         self.y_labels.append(id_)
 
-                    # update the training status for the GUI
-                    self.trainingStatus += 1
-
         # statistics for the bad photos
         print(f"[Trainer]: Amount of bad photos: {self.amount_bad_photos} out of {self.amount_of_photos}")
         # print the percentage of bad photos
@@ -83,13 +84,13 @@ class Trainer:
 
     def train(self):
         self.recognizer.train(self.x_train, np.array(self.y_labels))
-        self.recognizer.save("trainner.yml")
+        self.recognizer.save(self.working_dir + "trainner.yml")
         print("[Trainer]: Training complete")
 
         self.trainingStatus += 1
 
     def save_labels(self):
-        with open("labels.pickle", "wb") as f:
+        with open(self.working_dir + "labels.pickle", "wb") as f:
             pickle.dump(self.label_ids, f)
         print("[Trainer]: Labels saved")
 

@@ -14,11 +14,11 @@ class FaceDetector:
         self.cap = cv2.VideoCapture(0)
         self.face_cascades = cv2.CascadeClassifier("Resources/Cascades/data/haarcascade_frontalface_default.xml")
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
-        self.recognizer.read("trainner.yml")
+        self.recognizer.read(working_directory + "/trainner.yml")
         print("[FaceDetector]: Training data loaded")
         self.labels = {}
 
-        with open("labels.pickle", "rb") as f:
+        with open(working_directory + "/labels.pickle", "rb") as f:
             og_labels = pickle.load(f)
             self.labels = {v: k for k, v in og_labels.items()}
         self.parent = parent
@@ -55,7 +55,7 @@ class FaceDetector:
             for (x, y, w, h) in faces:
                 roi_gray = gray[y:y + h, x:x + w]
                 id_, conf = self.recognizer.predict(roi_gray)
-                if 55 <= conf <= 90:
+                if 55 <= conf <= 99:
                     font = cv2.FONT_HERSHEY_SIMPLEX
                     confRounded = round(conf, 1)
                     name = ((self.labels[id_]) + " " + str(int(confRounded)) + "%")
@@ -65,6 +65,10 @@ class FaceDetector:
                     name = name.title()
                     cv2.putText(img, name, (x, y - 5), font, 0.5, color, stroke, cv2.LINE_AA)
                     cv2.rectangle(img, (x, y), (x + w, y + h), (100, 255, 100), 2)
+
+                elif conf > 100:
+                    pass
+
                 else:
                     font = cv2.FONT_HERSHEY_SIMPLEX
                     name = "Unknown"
@@ -107,6 +111,6 @@ class FaceDetector:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = FaceDetector(root, "Resources")
+    app = FaceDetector(root, "Resources", )
     app.running = True
     app.start()
