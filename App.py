@@ -171,7 +171,14 @@ class App:
         if working_directory:
             print(f"Working directory changed to: {working_directory}")
             self.working_directory = working_directory
-            self.wd_button.config(text=working_directory)
+
+            # check if the path is too long to display
+            if len(working_directory) > 30:
+                # use the last 3 words of the path
+                self.wd_button.config(text=".../" + "/".join(working_directory.split("/")[-3:]))
+            else:
+                self.wd_button.config(text=working_directory)
+
 
     def saveInJSON(self):
         # open file to read and write in json format
