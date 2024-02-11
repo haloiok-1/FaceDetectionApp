@@ -4,43 +4,21 @@ import pickle
 
 print("Everything is imported")
 
-
-def draw_border(img, pt1, pt2, color, thickness, r, d):
-    x1, y1 = pt1
-    x2, y2 = pt2
-
-    # Top left
-    cv2.line(img, (x1 + r, y1), (x1 + r + d, y1), color, thickness)
-    cv2.line(img, (x1, y1 + r), (x1, y1 + r + d), color, thickness)
-    cv2.ellipse(img, (x1 + r, y1 + r), (r, r), 180, 0, 90, color, thickness)
-
-    # Top right
-    cv2.line(img, (x2 - r, y1), (x2 - r - d, y1), color, thickness)
-    cv2.line(img, (x2, y1 + r), (x2, y1 + r + d), color, thickness)
-    cv2.ellipse(img, (x2 - r, y1 + r), (r, r), 270, 0, 90, color, thickness)
-
-    # Bottom left
-    cv2.line(img, (x1 + r, y2), (x1 + r + d, y2), color, thickness)
-    cv2.line(img, (x1, y2 - r), (x1, y2 - r - d), color, thickness)
-    cv2.ellipse(img, (x1 + r, y2 - r), (r, r), 90, 0, 90, color, thickness)
-
-    # Bottom right
-    cv2.line(img, (x2 - r, y2), (x2 - r - d, y2), color, thickness)
-    cv2.line(img, (x2, y2 - r), (x2, y2 - r - d), color, thickness)
-    cv2.ellipse(img, (x2 - r, y2 - r), (r, r), 0, 0, 90, color, thickness)
-
-
 cap = cv2.VideoCapture(0)
 
-face_cascades = cv2.CascadeClassifier("Resources/Cascades/data/haarcascade_frontalface_alt.xml")
+face_cascades = cv2.CascadeClassifier("Resources/Cascades/data/haarcascade_frontalface_default.xml")
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read("trainner.yml")
+print("Training data loaded")
 
 labels = {}
 with open("labels.pickle", "rb") as f:
     og_labels = pickle.load(f)
     lables = {v: k for k, v in og_labels.items()}
+
+    # print only the names in the labels
+    print("Labels loaded: \n", lables)
 
 while (True):
     success, img = cap.read()
@@ -49,30 +27,36 @@ while (True):
     img = cv2.flip(img, 1)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascades.detectMultiScale(gray, scaleFactor=2, minNeighbors=5, minSize=(30, 30))
+    faces = face_cascades.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=(30, 30))
 
     for (x, y, w, h) in faces:
         # print(x, y, w, h)
         roi_gray = gray[y:y + h, x:x + w]
-        roi_color = gray[y:y + h, x:x + w]
 
         id_, conf = recognizer.predict(roi_gray)
         if 55 <= conf <= 90:
-            # print(id_)
-            # print(lables[id_])
             font = cv2.FONT_HERSHEY_SIMPLEX
             confRounded = round(conf, 1)
-            name = ((lables[id_]) + " " + str(confRounded) + "%")
+            name = ((lables[id_]) + " " + str(int(confRounded)) + "%")
             color = (100, 255, 100)
             stroke = 1
-            cv2.putText(img, name, (x, y - 5), font, 0.5, color, stroke, cv2.LINE_AA)
 
-        color = (255, 0, 0)
-        stroke = 2
-        end_cord_x = x + w
-        end_cord_y = y + h
-        cv2.rectangle(img, (x, y), (end_cord_x, end_cord_y), color, stroke)
-        # draw_border(img, (x, y), (end_cord_x, end_cord_y), color, stroke, 4, 10)
+            # refomating the name
+            name = name.replace("_", " ")
+            name = name.title()
+
+            cv2.putText(img, name, (x, y - 5), font, 0.5, color, stroke, cv2.LINE_AA)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (100, 255, 100), 2)
+        else:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            name = "Unknown"
+            color = (0, 0, 255)
+            stroke = 1
+            cv2.putText(img, name, (x, y - 5), font, 0.5, color, stroke, cv2.LINE_AA)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+
+
 
     cv2.imshow("Video", img)
 
