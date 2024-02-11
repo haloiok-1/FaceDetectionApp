@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import json
-
+import csv
 from FaceDetector import FaceDetector
 from Person import Person
 from Phototaker import Phototaker
@@ -21,19 +21,7 @@ class App:
         self.photo_directory = self.working_directory + "Persons/"
         self.master = master
 
-        genders = [
-            "Male",
-            "Female",
-            "Non-binary",
-            "Transgender",
-            "Agender",
-            "Genderqueer",
-            "Genderfluid",
-            "Intersex",
-            "Two-Spirit",
-            "Prefer not to say",
-            "Attack Helicopter"
-        ]
+        genders = self.import_csv_to_list(self.working_directory + "genders.csv")
 
         master.title("Person Detector")
         master.geometry("500x400")  # Setzt die Größe des Fensters auf 600x400 Pixel
@@ -273,6 +261,19 @@ class App:
             for file in files:
                 if file.endswith("jpg"):
                     self.amount_of_photos += 1
+
+    def import_csv_to_list(self, file_path):
+        if not os.path.exists(file_path):
+            data = ["male", "female", "diverse"]
+            return data
+
+        with open(file_path, "r") as csv_file:
+            csv_reader = csv.reader(csv_file)
+            data = []
+            for row in csv_reader:
+                data.append("".join(row))
+
+            return data
 
 
 # Create the main window
