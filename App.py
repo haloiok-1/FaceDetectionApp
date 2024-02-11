@@ -17,7 +17,8 @@ class App:
         self.amount_of_photos = 0
         self.current_person = None
         self.photo_directory = None
-        self.working_directory = "Resources/Persons/"
+        self.working_directory = "Resources/"
+        self.photo_directory = self.working_directory + "Persons/"
         self.master = master
 
         genders = [
@@ -116,16 +117,16 @@ class App:
         # check if working directory exists
         if not os.path.exists(self.working_directory):
             os.mkdir(self.working_directory)
+            os.mkdir(self.photo_directory)
 
     def submit(self):
         # check if folder with name already exists
-        if os.path.exists(self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
+        if os.path.exists(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
             messagebox.showinfo("Already Exists", "A folder with this name already exists", icon="info")
             self.photo_button.config(state="normal")
             return
         else:
-            photo_directory = self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()
-            os.mkdir(self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
+            os.mkdir(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
 
         self.current_person = Person(
             name=self.entry_firstname.get(),
@@ -133,7 +134,7 @@ class App:
             age=self.entry_age.get(),
             gender=self.entry_gender.cget("text"),
             profile_pic_path="",
-            photo_folder_path=self.working_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()
+            photo_folder_path=self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()
         )
 
         firstname = self.entry_firstname.get()
@@ -179,7 +180,7 @@ class App:
                        "profile_pic_path": "", "photo_folder_path": self.current_person.photo_folder_path}
 
         try:
-            with open(self.working_directory + "persons.json", "r") as f:
+            with open(self.photo_directory + "persons.json", "r") as f:
                 lines = f.readlines()
 
             del lines[-1]
@@ -189,7 +190,7 @@ class App:
             last_line = last_line[:-1] + "," + "\n"
             lines[-1] = last_line
 
-            with open(self.working_directory + "persons.json", "w") as f:
+            with open(self.photo_directory + "persons.json", "w") as f:
                 print(lines)
                 f.writelines(lines)
                 # write the new person information
@@ -201,7 +202,7 @@ class App:
         except Exception as e:
             print(e)
             print("File not found. Creating new file.")
-            with open(self.working_directory + "persons.json", "a") as f:
+            with open(self.photo_directory + "persons.json", "a") as f:
                 f.write("[\n")
                 json.dump(person_dict, f, indent=4)
                 f.write("\n]")
@@ -214,7 +215,7 @@ class App:
         print(self.current_person.photo_folder_path)
 
         print(self.working_directory)
-        pt = Phototaker(self.master, self.current_person, self.working_directory)
+        pt = Phototaker(self.master, self.current_person, self.photo_directory)
         pt.start()
 
     def start_face_training(self):
