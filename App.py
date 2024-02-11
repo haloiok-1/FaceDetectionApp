@@ -5,12 +5,13 @@ import json
 from Person import Person
 from Phototaker import Phototaker
 import threading
-from FaceRecognizer import FaceRecognizer as fr
+from Trainer import Trainer as fr
 
 
 class App:
     def __init__(self, master):
         # Variables
+        self.trainingError = None
         self.amount_of_photos = 0
         self.current_person = None
         self.photo_directory = None
@@ -75,7 +76,7 @@ class App:
         self.label_takePhotos = tk.Label(right_frame, text="Fotos aufnehmen")
         self.label_takePhotos.pack(pady=(20, 10))  # Add some padding above and below the label
 
-        self.photo_button = tk.Button(right_frame, text="Start Shooting", command=self.start_Phototaker,
+        self.photo_button = tk.Button(right_frame, text="Start Shooting", command=self.start_phototaker,
                                       padx=20, pady=10, state="disabled")
         self.photo_button.pack()
 
@@ -95,7 +96,6 @@ class App:
 
         self.trainingstatus_label = tk.Label(right_frame, text="")
         self.trainingstatus_label.pack()
-
 
         # check if working directory exists
         if not os.path.exists(self.working_directory):
@@ -168,7 +168,8 @@ class App:
 
             del lines[-1]
             last_line = lines[-1]
-            ## add to the penultimate line a comma
+
+            # add to the penultimate line a comma
             last_line = last_line[:-1] + "," + "\n"
             lines[-1] = last_line
 
@@ -190,7 +191,7 @@ class App:
                 f.write("\n]")
                 print(f"Informationen erfolgreich in {f} gespeichert.")
 
-    def start_Phototaker(self):
+    def start_phototaker(self):
         print("Starting Phototaker")
 
         # print all information of the current person
@@ -205,17 +206,20 @@ class App:
         face_recognizer = fr(self.working_directory,
                              "Resources/Cascades/data/haarcascade_frontalface_default.xml")
         threading.Thread(target=self.worker_face_training, args=(face_recognizer,)).start()
-        # face_recognizer.process()
+
+        # disable the button
+        self.training_button.config(state="disabled", text="Training...", background="grey")
 
         # progress bar
         # get amount of training photos
-        amount_of_photos = 0
+        self.amount_of_photos = 0
         self.amout_of_photos()
         amount_of_photos = self.amount_of_photos
-        #print(amount_of_photos)
+        # print(amount_of_photos)
 
         self.progress["maximum"] = amount_of_photos + 3
         self.progress["value"] = 0
+        self.trainingstatus_label.config(fg="black")
 
         while self.progress["value"] < self.progress["maximum"]:
             self.progress["value"] = face_recognizer.getTrainingStatus()
@@ -223,11 +227,21 @@ class App:
             self.master.update()
 
             # update the label with the precentage of the training
-            self.trainingstatus_label.config(text=f"Training Status: {int(100 * self.progress['value'] / self.progress['maximum'])}%")
+            self.trainingstatus_label.config(
+                text=f"Training Status: {int(100 * self.progress['value'] / self.progress['maximum'])}%")
+
+            # if something goes wrong with the training
+            if self.trainingError:
+                self.trainingstatus_label.config(text="Training failed", fg="red")
+                break
+
+        # enable the button again
+        self.training_button.config(state="normal", text="Start Training", background="SystemButtonFace")
+        self.trainingstatus_label.config(text="Training complete", fg="green")
 
     def worker_face_training(self, face_recognizer):
-        face_recognizer.process()
-        print("Face Training complete")
+        self.trainingError = face_recognizer.process()
+        return self.trainingError, print("Training complete")
 
     def amout_of_photos(self):
         for root, dirs, files in os.walk(self.working_directory):
