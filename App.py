@@ -7,7 +7,7 @@ from FaceDetector import FaceDetector
 from Person import Person
 from Phototaker import Phototaker
 import threading
-from Trainer import Trainer as fr
+from Trainer import Trainer
 
 
 class App:
@@ -160,7 +160,7 @@ class App:
         if not messagebox.askyesno("Submit", "Do you really want to submit?"):
             return
 
-        print(f"Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
+        print(f"[App]: Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
         self.saveInJSON()
         # os.mkdir(self.working_directory + firstname + "_" + lastname)
         self.photo_button.config(state="normal", borderwidth=5, relief="raised")
@@ -169,7 +169,7 @@ class App:
         working_directory = tk.filedialog.askdirectory(title="Changing Working Directory for depositing further Photos",
                                                        initialdir=self.working_directory)
         if working_directory:
-            print(f"Working directory changed to: {working_directory}")
+            print(f"[App]: Working directory changed to: {working_directory}")
             self.working_directory = working_directory
 
             # check if the path is too long to display
@@ -178,7 +178,6 @@ class App:
                 self.wd_button.config(text=".../" + "/".join(working_directory.split("/")[-3:]))
             else:
                 self.wd_button.config(text=working_directory)
-
 
     def saveInJSON(self):
         # open file to read and write in json format
@@ -198,37 +197,35 @@ class App:
             lines[-1] = last_line
 
             with open(self.photo_directory + "persons.json", "w") as f:
-                print(lines)
                 f.writelines(lines)
                 # write the new person information
                 json.dump(person_dict, f, indent=4)
                 f.write("\n]")
-                print(f"Informationen erfolgreich in {f} gespeichert.")
-
+                print(f"[App]: Informationen erfolgreich in {self.photo_directory}/persons.json gespeichert.")
 
         except Exception as e:
-            print(e)
-            print("File not found. Creating new file.")
+            print(f"[App]: {e}")
+            print("[App]: File not found. Creating new file.")
             with open(self.photo_directory + "persons.json", "a") as f:
                 f.write("[\n")
                 json.dump(person_dict, f, indent=4)
                 f.write("\n]")
-                print(f"Informationen erfolgreich in {f} gespeichert.")
+                print(f"[App]: Informationen erfolgreich in {f} gespeichert.")
 
     def start_phototaker(self):
-        print("Starting Phototaker")
+        print("[App]: Starting Phototaker")
 
         # print all information of the current person
-        print(self.current_person.photo_folder_path)
+        print(f"[App]: {self.current_person.photo_folder_path}")
 
-        print(self.working_directory)
+        print("[App]:  " + self.working_directory)
         pt = Phototaker(self.master, self.current_person, self.photo_directory)
         pt.start()
 
     def start_face_training(self):
-        print("Starting Face Training")
-        face_recognizer = fr(self.working_directory,
-                             "Resources/Cascades/data/haarcascade_frontalface_default.xml")
+        print("[App]: Starting Face Training")
+        face_recognizer = Trainer(self.photo_directory,
+                                  "Resources/Cascades/data/haarcascade_frontalface_default.xml")
         threading.Thread(target=self.worker_face_training, args=(face_recognizer,)).start()
 
         # disable the button
@@ -239,7 +236,6 @@ class App:
         self.amount_of_photos = 0
         self.amout_of_photos()
         amount_of_photos = self.amount_of_photos
-        # print(amount_of_photos)
 
         self.progress["maximum"] = amount_of_photos + 3
         self.progress["value"] = 0
@@ -265,10 +261,10 @@ class App:
 
     def worker_face_training(self, face_recognizer):
         self.trainingError = face_recognizer.process()
-        return self.trainingError, print("Training complete")
+        return self.trainingError, print("[App]: Training complete")
 
     def start_facedetector(self):
-        print("Starting Face Detector")
+        print("[App]:Starting Face Detector")
         fd = FaceDetector(self.master, self.working_directory)
         fd.start()
 

@@ -15,6 +15,7 @@ class FaceDetector:
         self.face_cascades = cv2.CascadeClassifier("Resources/Cascades/data/haarcascade_frontalface_default.xml")
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.recognizer.read("trainner.yml")
+        print("[FaceDetector]: Training data loaded")
         self.labels = {}
 
         with open("labels.pickle", "rb") as f:
@@ -75,7 +76,7 @@ class FaceDetector:
             # writing the processed image to the img variable
             self.img = img
 
-        print("Face detection closed")
+        print("[FaceDetector]: detection closed")
 
     def display_camera_stream(self):
         while self.running:
@@ -88,12 +89,12 @@ class FaceDetector:
                 self.video_label.config(image=img_tk)
                 self.video_label.image = img_tk
         else:
-            print("No image to display")
+            print("[FaceDetector]:No image to display")
 
-        print("Video stream closed")
+        print("[FaceDetector]: Video stream closed")
 
     def start(self):
-        print("Starting the Face Detector...")
+        print("[FaceDetector]: started...")
         self.window.mainloop()
         self.running = True
 
@@ -101,7 +102,7 @@ class FaceDetector:
         self.running = False
         self.cap.release()
         self.window.destroy()
-        print("Face Detector closed")
+        print("[FaceDetector]: Face Detector closed")
 
 
 if __name__ == "__main__":

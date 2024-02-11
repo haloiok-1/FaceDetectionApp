@@ -49,7 +49,7 @@ class Phototaker:
         self.close_button.pack()
 
     def start(self):
-        print(f"Starting the photo taker for {self.current_person.name} {self.current_person.lastname}")
+        print(f"[PhotoTaker]: Starting the photo taker for {self.current_person.name} {self.current_person.lastname}")
         # Start the camera stream
         threading.Thread(target=self.display_camera_stream).start()
         self.window.mainloop()
@@ -74,7 +74,7 @@ class Phototaker:
                       (255, 0, 0), 2)
 
         if not ret:
-            print("No frame available")
+            print("[PhotoTaker]: No frame available")
             return
 
         # Load a pre-trained Haar Cascade model for face detection
@@ -147,7 +147,7 @@ class Phototaker:
             # write the roi to the photo and save it
             cv2.imwrite(photo_path, frame[self.roi[1]:self.roi[1] + self.roi[3], self.roi[0]:self.roi[0] + self.roi[2]])
             self.counter += 1
-            print(f"Photo {self.counter} saved to {photo_path}")
+            print(f"[PhotoTaker]: Photo {self.counter} saved to {photo_path}")
 
         self.photo_button.config(text="Take Photos", state="normal")
         self.is_Shooting = False
@@ -167,7 +167,7 @@ class Phototaker:
         profile_pic_path = f"{self.photo_directory}/profile_pic.jpg"
         cv2.imwrite(profile_pic_path, frame)
         self.current_person.profile_pic_path = profile_pic_path
-        print(f"Profile picture set to {profile_pic_path}")
+        print(f"[PhotoTaker]: Profile picture set to {profile_pic_path}")
 
 
 if __name__ == "__main__":
