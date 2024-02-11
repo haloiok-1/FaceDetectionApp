@@ -16,13 +16,14 @@ class Trainer:
         self.x_train = []
         self.y_labels = []
         self.trainingStatus = 0
+        self.amount_bad_photos = 0
 
     def load_images(self):
         print("Loading images...")
         for root, dirs, files in os.walk(self.image_dir):
             for file in files:
                 if file.endswith("png") or file.endswith("jpg") or file.endswith("PNG"):
-                    self.amount_of_photos = len(files)
+                    self.amount_of_photos += 1
                     path = os.path.join(root, file)
                     label = os.path.basename(os.path.dirname(path)).replace(" ", "-").lower()
                     # print(path, label)
@@ -39,32 +40,46 @@ class Trainer:
                     final_image = pil_image.resize(size)
                     image_array = np.array(final_image, "uint8")
                     # print(len(image_array))
-                    faces = self.face_cascades.detectMultiScale(image_array, scaleFactor=1.5, minNeighbors=5,
+                    faces = self.face_cascades.detectMultiScale(image_array, scaleFactor=1.2, minNeighbors=3,
                                                                 minSize=(30, 30))
+
+                    # if no faces are detected, skip the image
+                    if len(faces) == 0:
+                        # print the image path and the amount of faces detected
+                        print(f"{path} - No face detected -> deleted")
+                        # delete the image
+                        os.remove(path)
+                        self.amount_bad_photos += 1
+                        continue
+
+                    if len(faces) > 1:
+                        # print the image path and the amount of faces detected
+                        print(f"{path} - More than one face detected -> deleted")
+                        os.remove(path)
+                        self.amount_bad_photos += 1
+                        continue
 
                     for (x, y, w, h) in faces:
                         roi = np.array(image_array[y:y + h, x:x + w])
                         self.x_train.append(roi)
                         self.y_labels.append(id_)
 
-                    # convert the image to a numpy array
-                    image_array = np.array(pil_image, "uint8")
-
                     # update the training status for the GUI
                     self.trainingStatus += 1
-                    # print all known labels as strings
 
-
-
+        # statistics for the bad photos
+        print(f"Amount of bad photos: {self.amount_bad_photos} out of {self.amount_of_photos}")
+        # print the percentage of bad photos
+        print(f"Percentage of bad photos: {self.amount_bad_photos / self.amount_of_photos * 100}%")
 
     def check_data(self):
         if len(self.x_train) == 0 or len(self.y_labels) == 0:
             print("Training data is empty. Please provide more data.")
-            return False
+            return True
 
         if len(self.x_train) < 2 or len(self.y_labels) < 2:
             print("Not enough training data.")
-            return False
+            return True
 
         self.trainingStatus += 1
 
@@ -84,7 +99,8 @@ class Trainer:
 
     def process(self):
         self.load_images()
-        self.check_data()
+        if self.check_data():
+            return True
         self.train()
         self.save_labels()
 
@@ -96,5 +112,5 @@ class Trainer:
 
 
 if __name__ == "__main__":
-    recognizer = Trainer("Resources/Persons", "Resources/Cascades/data/haarcascade_frontalface_alt.xml")
+    recognizer = Trainer("Resources/Persons", "Resources/Cascades/data/haarcascade_frontalface_default.xml")
     recognizer.process()
