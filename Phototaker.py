@@ -49,7 +49,7 @@ class Phototaker:
         self.close_button.pack()
 
     def start(self):
-        print(f"[PhotoTaker]: Starting the photo taker for {self.current_person.name} {self.current_person.lastname}")
+        print(f"[PhotoTaker]: Starting the photo taker for {self.current_person.firstname} {self.current_person.lastname}")
         # Start the camera stream
         threading.Thread(target=self.display_camera_stream).start()
         self.window.mainloop()
@@ -172,7 +172,7 @@ class Phototaker:
 
 if __name__ == "__main__":
     p = Person(
-        name="John",
+        firstname="John",
         lastname="Doe",
         age=30,
         gender="male",
