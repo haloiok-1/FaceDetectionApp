@@ -63,6 +63,12 @@ class App:
         self.submit_button = tk.Button(left_frame, text="Submit", command=self.submit, padx=20, pady=10)
         self.submit_button.pack()
 
+        # button to see all current persons in the system
+        self.showPersons_button = tk.Button(left_frame, text="Show Persons", command=self.showPersons, padx=20, pady=10)
+        self.showPersons_button.pack()
+
+
+
         # Add the labels and entries to the right frame
         self.label_takePhotos = tk.Label(right_frame, text="Fotos aufnehmen")
         self.label_takePhotos.pack(pady=(20, 10))  # Add some padding above and below the label
@@ -258,6 +264,21 @@ class App:
         print("[App]:Starting Face Detector")
         fd = FaceDetector(self.master, self.working_directory)
         fd.start()
+
+
+    def showPersons(self):
+        persons = []
+        with open(self.photo_directory + "persons.json", "r") as f:
+            persons = json.load(f)
+        print(persons)
+        for person in persons:
+            print(f"Name: {person['firstname']} {person['lastname']}, Age: {person['age']}")
+            messagebox.showinfo("Persons", person, icon="info")
+
+
+
+
+
 
     def amout_of_photos(self):
         for root, dirs, files in os.walk(self.working_directory):
