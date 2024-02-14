@@ -1,5 +1,8 @@
+import os
+import shutil
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
+from Phototaker import Phototaker
 
 from Person import Person, dict_to_person
 import json
@@ -14,15 +17,31 @@ class PersonGUI:
         self.working_directory = working_directory + "Persons/"
         self.master.title("Person GUI")
         self.master.geometry("800x600")
+        # create a control frame
+        self.control_frame = tk.Frame(self.master)
+        # expand the frame to fill the bottom half of the window
+        self.control_frame.pack(expand=True, fill="both")
 
-        self.label = tk.Label(self.master, text="Person GUI", font=("Arial", 20))
-        # self.label.pack()
+        # create a grid frame
+        self.grid_frame = tk.Frame(self.master)
+        # expand the frame to fill the top half of the window
+        self.grid_frame.pack(expand=True, fill="both")
 
-        self.get_persons_button = tk.Button(self.master, text="Get Persons", command=self.get_persons, padx=20, pady=10)
-        # self.get_persons_button.pack()
+        self.label = tk.Label(self.control_frame, text="Person GUI", font=("Arial", 20))
+        self.label.pack()
 
-        self.close_button = tk.Button(self.master, text="Close", command=self.master.destroy, padx=20, pady=10)
-        # self.close_button.pack()
+        self.get_persons_button = tk.Button(self.control_frame, text="Get Persons", command=self.get_persons, padx=20,
+                                            pady=10)
+        self.get_persons_button.pack()
+
+        self.close_button = tk.Button(self.control_frame, text="Close", command=self.master.destroy, padx=20, pady=10)
+        self.close_button.pack()
+
+        # add an update button
+        self.update_button = tk.Button(self.control_frame, text="Update", command=self.update_grid, padx=20,
+                                       pady=10)
+        # pin the button to the bottom of the window
+        self.update_button.pack(side="bottom")
 
         self.start()
 
@@ -30,7 +49,7 @@ class PersonGUI:
         print("[PersonGUI]: Starting the person GUI")
         self.get_persons()
 
-        self.create_grid_for_persons(self.persons)
+        self.create_grid_for_persons()
 
         self.master.mainloop()
 
@@ -46,11 +65,13 @@ class PersonGUI:
             self.persons.append(dict_to_person(person))
         print(f"[PersonGUI]: Found {len(self.persons)} persons")
 
-    def create_grid_for_persons(self, persons: list[Person]):
+    def create_grid_for_persons(self):
+        persons = self.persons
+
         for i, p in enumerate(persons):
 
             # Create a name label for the person
-            label = tk.Label(self.master, text=p.firstname + " " + p.lastname, font=("Arial", 14))
+            label = tk.Label(self.grid_frame, text=p.firstname + " " + p.lastname, font=("Arial", 14))
             label.grid(row=i, column=0)
 
             # create photo with the profile picture if it exists
@@ -58,40 +79,71 @@ class PersonGUI:
                 if p.profile_pic_path == "":
                     print(f"[PersonGUI]: Profile picture for {p.firstname} {p.lastname} not set")
                 img = tk.PhotoImage(file=p.profile_pic_path)
-                img_label = tk.Label(self.master, image=img)
+                img_label = tk.Label(self.grid_frame, image=img)
                 img_label.grid(row=i, column=1)
             except FileNotFoundError:
                 print(f"[PersonGUI]: Profile picture for {p.firstname} {p.lastname} not found")
 
             # Create a button to open the persons photo folder
-            button = tk.Button(self.master, text="Open photo folder",
-                               command=lambda: print(f"Opening {p.photo_folder_path}"), padx=0, pady=10)
+            button = tk.Button(self.grid_frame, text="Open photo folder",
+                               command=lambda p=p: self.open_fileexplorer_for_person(p), padx=0, pady=10)
             button.grid(row=i, column=2)
 
             # Create a button to delete the person
-            delete_button = tk.Button(self.master, text="Delete",
-                                      command=lambda: self.delete_person(p), padx=0, pady=10, bg="red")
+            delete_button = tk.Button(self.grid_frame, text="Delete",
+                                      command=lambda p=p: self.delete_person(p), padx=0, pady=10, bg="red")
             delete_button.grid(row=i, column=3)
 
             # Create a button to open the photo taker
-            photo_taker_button = tk.Button(self.master, text="Take Photos",
-                                           command=lambda: print(f"Opening photo taker for {p.firstname} {p.lastname}"),
+            photo_taker_button = tk.Button(self.grid_frame, text="Take Photos",
+                                           command=lambda p=p: self.open_photo_taker(p),
                                            padx=0, pady=10, bg="green")
             photo_taker_button.grid(row=i, column=4)
 
             # label for amount of photos in folder
-            amount_of_photos_label = tk.Label(self.master, text=f"Amount of photos: {p.current_amount_of_photos()}",
+            amount_of_photos_label = tk.Label(self.grid_frame, text=f"Amount of photos: {p.current_amount_of_photos()}",
                                               padx=20, pady=10, font=("Arial", 12))
             amount_of_photos_label.grid(row=i, column=5)
 
-
-
-
-
-            # create a separator between the persons
+    def open_fileexplorer_for_person(self, person: Person):
+        # just to see the photos in the folder
+        tk.filedialog.askopenfiles(initialdir=person.photo_folder_path, title="Select folder",
+                                   filetypes=(("all files", "*.*"),))
 
     def delete_person(self, person: Person):
-        pass
+        # ask if the user is sure
+        response = messagebox.askyesno("Delete",
+                                       f"Are you sure you want to delete {person.firstname} {person.lastname}?")
+        if response:
+            # delete the person
+            self.persons.remove(person)
+
+            # delete the person from the file
+            with open(self.working_directory + "persons.json", "w") as file:
+                json.dump([p.__dict__ for p in self.persons], file, indent=4)
+
+            # delete the photo folder
+            # check if the directory exists
+            if os.path.isdir(person.photo_folder_path):
+                # delete the directory with all its content
+                shutil.rmtree(person.photo_folder_path)
+                print(f"[PersonGUI]: Deleted {person.photo_folder_path}")
+
+            self.update_grid()
+
+        else:
+            print(f"[PersonGUI]: Did not delete {person.firstname} {person.lastname}")
+
+    def open_photo_taker(self, person: Person):
+        # open the photo taker for the person
+        Phototaker(self.master, person, self.working_directory).start()
+
+    def update_grid(self):
+        # destroy all widgets in the grid frame
+        for widget in self.grid_frame.winfo_children():
+            widget.destroy()
+        # create the grid again
+        self.create_grid_for_persons()
 
 
 if __name__ == "__main__":
