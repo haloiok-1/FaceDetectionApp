@@ -126,7 +126,7 @@ class App:
             os.mkdir(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
 
         self.current_person = Person(
-            name=self.entry_firstname.get(),
+            firstname=self.entry_firstname.get(),
             lastname=self.entry_lastname.get(),
             age=self.entry_age.get(),
             gender=self.entry_gender.cget("text"),
@@ -178,7 +178,7 @@ class App:
 
     def saveInJSON(self):
         # open file to read and write in json format
-        person_dict = {"firstname": self.current_person.name, "lastname": self.current_person.lastname,
+        person_dict = {"firstname": self.current_person.firstname, "lastname": self.current_person.lastname,
                        "age": self.current_person.age, "gender": self.current_person.gender,
                        "profile_pic_path": "", "photo_folder_path": self.current_person.photo_folder_path}
 
