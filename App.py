@@ -5,6 +5,7 @@ import json
 import csv
 from FaceDetector import FaceDetector
 from Person import Person
+from PersonGUI import PersonGUI
 from Phototaker import Phototaker
 import threading
 from Trainer import Trainer
@@ -24,7 +25,11 @@ class App:
         genders = self.import_csv_to_list(self.working_directory + "genders.csv")
 
         master.title("Person Detector")
-        master.geometry("500x400")  # Setzt die Größe des Fensters auf 600x400 Pixel
+        master.geometry("1000x600")  # Setzt die Größe des Fensters auf 600x400 Pixel
+        print("[App]: Starting the application")
+        # print the dimensions of the window
+        print(f"[App]: Window size: {master.winfo_width()}x{master.winfo_height()}")
+
 
         # Create a frame for the left column
         left_frame = tk.Frame(master)
@@ -62,12 +67,6 @@ class App:
 
         self.submit_button = tk.Button(left_frame, text="Submit", command=self.submit, padx=20, pady=10)
         self.submit_button.pack()
-
-        # button to see all current persons in the system
-        self.showPersons_button = tk.Button(left_frame, text="Show Persons", command=self.showPersons, padx=20, pady=10)
-        self.showPersons_button.pack()
-
-
 
         # Add the labels and entries to the right frame
         self.label_takePhotos = tk.Label(right_frame, text="Fotos aufnehmen")
@@ -115,6 +114,11 @@ class App:
         # check if photo directory exists
         if not os.path.exists(self.photo_directory):
             os.mkdir(self.photo_directory)
+
+        self.showPersons()
+
+        #print the current window size
+
 
     def submit(self):
         # check if folder with name already exists
@@ -267,13 +271,10 @@ class App:
 
 
     def showPersons(self):
-        persons = []
-        with open(self.photo_directory + "persons.json", "r") as f:
-            persons = json.load(f)
-        print(persons)
-        for person in persons:
-            print(f"Name: {person['firstname']} {person['lastname']}, Age: {person['age']}")
-            messagebox.showinfo("Persons", person, icon="info")
+        # start the person GUI
+        pgui = PersonGUI(self.master, self.working_directory)
+        pgui.start()
+
 
 
 
@@ -304,4 +305,7 @@ class App:
 if __name__ == "__main__":
     window = tk.Tk()
     app = App(window)
+    # change window size
+    window.geometry("800x800")
+
     window.mainloop()
