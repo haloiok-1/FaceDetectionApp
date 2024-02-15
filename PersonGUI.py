@@ -16,8 +16,6 @@ class PersonGUI:
         self.persons = []
 
         self.working_directory = working_directory + "Persons/"
-        self.master.title("Person GUI")
-        self.master.geometry("800x600")
 
         # create title frame
         self.title_frame = tk.Frame(self.master)
@@ -91,22 +89,6 @@ class PersonGUI:
             label = tk.Label(self.grid_frame, text=p.firstname + " " + p.lastname, font=("Arial", 14))
             label.grid(row=i, column=0)
 
-            # create photo with the profile picture if it exists
-            try:
-                if p.profile_pic_path == "":
-                    print(f"[PersonGUI]: Profile picture for {p.firstname} {p.lastname} not set")
-
-                # create a photo with the profile picture
-
-                img = Image.open(p.profile_pic_path)
-                print(img)
-                img = img.resize((50, 50))
-                img = ImageTk.PhotoImage(img)
-                print(img)
-                img_label = tk.Label(self.grid_frame, image=img)
-                img_label.grid(row=i, column=1)
-            except FileNotFoundError:
-                print(f"[PersonGUI]: Profile picture for {p.firstname} {p.lastname} not found")
 
             # Create a button to open the persons photo folder
             button = tk.Button(self.grid_frame, text="Open photo folder",
@@ -129,7 +111,7 @@ class PersonGUI:
                                               padx=20, pady=10, font=("Arial", 12))
             amount_of_photos_label.grid(row=i, column=5)
 
-            return img
+
 
     def open_fileexplorer_for_person(self, person: Person):
         # just to see the photos in the folder
