@@ -50,7 +50,7 @@ class FaceDetector:
             img = cv2.flip(img, 1)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            faces = self.face_cascades.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=(30, 30))
+            faces = self.face_cascades.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5)
 
             for (x, y, w, h) in faces:
                 roi_gray = gray[y:y + h, x:x + w]
