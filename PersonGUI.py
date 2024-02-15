@@ -3,6 +3,7 @@ import shutil
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from Phototaker import Phototaker
+from PIL import Image, ImageTk
 
 from Person import Person, dict_to_person
 import json
@@ -17,28 +18,42 @@ class PersonGUI:
         self.working_directory = working_directory + "Persons/"
         self.master.title("Person GUI")
         self.master.geometry("800x600")
-        # create a control frame
-        self.control_frame = tk.Frame(self.master)
-        # expand the frame to fill the bottom half of the window
-        self.control_frame.pack(expand=True, fill="both")
+
+        # create title frame
+        self.title_frame = tk.Frame(self.master)
+        # expand the frame to fill the top half of the window
+        self.title_frame.pack(fill="both")
+
+        self.separator = tk.Frame(height=2, bd=1, relief="sunken")
+        self.separator.pack(fill="x")
 
         # create a grid frame
         self.grid_frame = tk.Frame(self.master)
         # expand the frame to fill the top half of the window
         self.grid_frame.pack(expand=True, fill="both")
 
-        self.label = tk.Label(self.control_frame, text="Person GUI", font=("Arial", 20))
+        # create separator
+        self.separator = tk.Frame(height=2, bd=1, relief="sunken")
+        self.separator.pack(fill="x")
+
+        # create bottom frame
+        self.bottom_frame = tk.Frame(self.master)
+        # expand the frame to fill the bottom half of the window
+        self.bottom_frame.pack(fill="both")
+
+        self.label = tk.Label(self.title_frame, text="Person GUI", font=("Arial", 20))
         self.label.pack()
 
-        self.get_persons_button = tk.Button(self.control_frame, text="Get Persons", command=self.get_persons, padx=20,
+        self.get_persons_button = tk.Button(self.bottom_frame, text="Get Persons", command=self.get_persons, padx=20,
                                             pady=10)
-        self.get_persons_button.pack()
+        self.get_persons_button.pack(side="left")
 
-        self.close_button = tk.Button(self.control_frame, text="Close", command=self.master.destroy, padx=20, pady=10)
-        self.close_button.pack()
+        self.close_button = tk.Button(self.bottom_frame, text="Close", command=self.master.destroy, padx=20, pady=10)
+        # put the button to the right of the window
+        self.close_button.pack(side="right")
 
         # add an update button
-        self.update_button = tk.Button(self.control_frame, text="Update", command=self.update_grid, padx=20,
+        self.update_button = tk.Button(self.bottom_frame, text="Update", command=self.update_grid, padx=20,
                                        pady=10)
         # pin the button to the bottom of the window
         self.update_button.pack(side="bottom")
@@ -54,6 +69,8 @@ class PersonGUI:
         self.master.mainloop()
 
     def get_persons(self):
+        self.persons = []
+
         try:
             with open(self.working_directory + "persons.json", "r") as file:
                 persons = json.load(file)
@@ -78,7 +95,14 @@ class PersonGUI:
             try:
                 if p.profile_pic_path == "":
                     print(f"[PersonGUI]: Profile picture for {p.firstname} {p.lastname} not set")
-                img = tk.PhotoImage(file=p.profile_pic_path)
+
+                # create a photo with the profile picture
+
+                img = Image.open(p.profile_pic_path)
+                print(img)
+                img = img.resize((50, 50))
+                img = ImageTk.PhotoImage(img)
+                print(img)
                 img_label = tk.Label(self.grid_frame, image=img)
                 img_label.grid(row=i, column=1)
             except FileNotFoundError:
@@ -104,6 +128,8 @@ class PersonGUI:
             amount_of_photos_label = tk.Label(self.grid_frame, text=f"Amount of photos: {p.current_amount_of_photos()}",
                                               padx=20, pady=10, font=("Arial", 12))
             amount_of_photos_label.grid(row=i, column=5)
+
+            return img
 
     def open_fileexplorer_for_person(self, person: Person):
         # just to see the photos in the folder
