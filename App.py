@@ -14,6 +14,7 @@ from Trainer import Trainer
 class App:
     def __init__(self, master):
         # Variables
+        self.pgui = None
         self.trainingError = None
         self.amount_of_photos = 0
         self.current_person = None
@@ -29,7 +30,6 @@ class App:
         print("[App]: Starting the application")
         # print the dimensions of the window
         print(f"[App]: Window size: {master.winfo_width()}x{master.winfo_height()}")
-
 
         # Create a frame for the left column
         left_frame = tk.Frame(master)
@@ -68,18 +68,14 @@ class App:
         self.submit_button = tk.Button(left_frame, text="Submit", command=self.submit, padx=20, pady=10)
         self.submit_button.pack()
 
-        # Add the labels and entries to the right frame
-        self.label_takePhotos = tk.Label(right_frame, text="Fotos aufnehmen")
-        self.label_takePhotos.pack(pady=(20, 10))  # Add some padding above and below the label
-
-        self.photo_button = tk.Button(right_frame, text="Start Shooting", command=self.start_phototaker,
-                                      padx=20, pady=10, state="disabled")
-        self.photo_button.pack()
-
         # Create a button to change the working directory
         self.wd_button = tk.Button(right_frame, text=self.working_directory, command=self.change_directory,
                                    compound=tk.LEFT)
         self.wd_button.place(relx=1.0, rely=1.0, anchor=tk.SE)
+
+        # add a label for title
+        self.label_title = tk.Label(right_frame, text="Detector", font=("Arial", 18, "bold"))
+        self.label_title.pack(pady=(10, 0))
 
         self.training_label = tk.Label(right_frame, text="Face Training")
         self.training_label.pack(pady=(20, 0))
@@ -117,14 +113,12 @@ class App:
 
         self.showPersons()
 
-        #print the current window size
-
+        # print the current window size
 
     def submit(self):
         # check if folder with name already exists
         if os.path.exists(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
             messagebox.showinfo("Already Exists", "A folder with this name already exists", icon="info")
-            self.photo_button.config(state="normal")
             return
         else:
             os.mkdir(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
@@ -164,7 +158,13 @@ class App:
         print(f"[App]: Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
         self.saveInJSON()
         # os.mkdir(self.working_directory + firstname + "_" + lastname)
-        self.photo_button.config(state="normal", borderwidth=5, relief="raised")
+
+        # update the persons in the person GUI
+        # check if the person GUI is already created
+        if self.pgui:
+            self.pgui.update_grid(self)
+        else:
+            print("[App]: Person GUI not created yet")
 
     def change_directory(self):
         working_directory = tk.filedialog.askdirectory(title="Changing Working Directory for depositing further Photos",
@@ -269,17 +269,10 @@ class App:
         fd = FaceDetector(self.master, self.working_directory)
         fd.start()
 
-
     def showPersons(self):
         # start the person GUI
-        pgui = PersonGUI(self.master, self.working_directory)
-        pgui.start()
-
-
-
-
-
-
+        self.pgui = PersonGUI(self.master, self.working_directory)
+        self.pgui.start()
 
     def amout_of_photos(self):
         for root, dirs, files in os.walk(self.working_directory):

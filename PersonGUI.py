@@ -39,7 +39,7 @@ class PersonGUI:
         # expand the frame to fill the bottom half of the window
         self.bottom_frame.pack(fill="both")
 
-        self.label = tk.Label(self.title_frame, text="Person GUI", font=("Arial", 20))
+        self.label = tk.Label(self.title_frame, text="List of known Persons", font=("Arial", 18))
         self.label.pack()
 
         self.get_persons_button = tk.Button(self.bottom_frame, text="Get Persons", command=self.get_persons, padx=20,
@@ -86,7 +86,7 @@ class PersonGUI:
         for i, p in enumerate(persons):
 
             # Create a name label for the person
-            label = tk.Label(self.grid_frame, text=p.firstname + " " + p.lastname, font=("Arial", 14))
+            label = tk.Label(self.grid_frame, text=p.firstname + " " + p.lastname, font=("Arial", 12, "bold"))
             label.grid(row=i, column=0)
 
 
@@ -97,18 +97,18 @@ class PersonGUI:
 
             # Create a button to delete the person
             delete_button = tk.Button(self.grid_frame, text="Delete",
-                                      command=lambda p=p: self.delete_person(p), padx=0, pady=10, bg="red")
+                                      command=lambda p=p: self.delete_person(p), padx=0, pady=10, bg="#BD263C")
             delete_button.grid(row=i, column=3)
 
             # Create a button to open the photo taker
             photo_taker_button = tk.Button(self.grid_frame, text="Take Photos",
                                            command=lambda p=p: self.open_photo_taker(p),
-                                           padx=0, pady=10, bg="green")
+                                           padx=0, pady=10, bg=("#32936F"))
             photo_taker_button.grid(row=i, column=4)
 
             # label for amount of photos in folder
             amount_of_photos_label = tk.Label(self.grid_frame, text=f"Amount of photos: {p.current_amount_of_photos()}",
-                                              padx=20, pady=10, font=("Arial", 12))
+                                              padx=20, pady=10, font=("Arial", 12, "italic"), fg="black" if p.current_amount_of_photos() > 100 else "#BD263C")
             amount_of_photos_label.grid(row=i, column=5)
 
 
@@ -147,6 +147,7 @@ class PersonGUI:
         Phototaker(self.master, person, self.working_directory).start()
 
     def update_grid(self):
+        self.get_persons()
         # destroy all widgets in the grid frame
         for widget in self.grid_frame.winfo_children():
             widget.destroy()
