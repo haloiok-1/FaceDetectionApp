@@ -22,15 +22,12 @@ class FaceDetector:
 
         trainer = Trainer(working_directory, "", "")
         trainer.import_labels_from_json(working_directory + "/Persons/persons.json")
-        print(trainer.label_ids)
         # add the first label a blank label
         self.labels[0] = ""
         # add the rest of the labels
         for key, value in trainer.label_ids.items():
             self.labels[value] = key
 
-        # print all content of the labels
-        print(self.labels)
 
         # Create a window
         self.window = tk.Toplevel(parent)
@@ -89,8 +86,6 @@ class FaceDetector:
             # writing the processed image to the img variable
             self.img = img
 
-        print("[FaceDetector]: detection closed")
-
     def display_camera_stream(self):
         while self.running:
             if self.img is not None:
@@ -102,10 +97,8 @@ class FaceDetector:
                 if self.running:
                     self.video_label.config(image=img_tk)
                     self.video_label.image = img_tk
-        else:
-            print("[FaceDetector]: No image to display")
 
-        print("[FaceDetector]: Video stream closed")
+
 
     def start(self):
         print("[FaceDetector]: started...")
