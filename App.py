@@ -255,7 +255,7 @@ class App:
         return self.trainingError, print("[App]: Training complete")
 
     def start_facedetector(self):
-        print("[App]:Starting Face Detector")
+        print("[App]: Starting Face Detector")
         fd = FaceDetector(self.master, self.working_directory)
         fd.start()
 
@@ -267,7 +267,7 @@ class App:
 
     def import_csv_to_list(self, file_path):
         if not os.path.exists(file_path):
-            data = ["male", "female", "diverse"]
+            data = ["male", "female", "diverse", "other"]
             return data
 
         with open(file_path, "r") as csv_file:
