@@ -56,15 +56,12 @@ class PersonGUI:
         # pin the button to the bottom of the window
         self.update_button.pack(side="bottom")
 
-        self.start()
 
     def start(self):
         print("[PersonGUI]: Starting the person GUI")
         self.get_persons()
 
         self.create_grid_for_persons()
-
-        self.master.mainloop()
 
     def get_persons(self):
         self.persons = []

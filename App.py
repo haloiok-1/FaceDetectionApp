@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import json
@@ -22,8 +23,9 @@ class App:
         self.working_directory = "Resources/"
         self.photo_directory = self.working_directory + "Persons/"
         self.master = master
+        self.master.protocol("WM_DELETE_WINDOW", self.on_close)
 
-        genders = self.import_csv_to_list(self.working_directory + "genders.csv")
+        genders = import_csv_to_list(self.working_directory + "genders.csv")
 
         master.title("Person Detector")
         master.geometry("1000x600")  # Setzt die Größe des Fensters auf 600x400 Pixel
@@ -111,9 +113,8 @@ class App:
         if not os.path.exists(self.photo_directory):
             os.mkdir(self.photo_directory)
 
+        # start the person GUI to display the persons
         self.showPersons()
-
-        # print the current window size
 
     def submit(self):
         # check if folder with name already exists
@@ -161,8 +162,10 @@ class App:
 
         # update the persons in the person GUI
         # check if the person GUI is already created
+        print(f"[App]: {self.pgui}")
+
         if self.pgui:
-            self.pgui.update_grid(self)
+            self.pgui.update_grid()
         else:
             print("[App]: Person GUI not created yet")
 
@@ -272,6 +275,8 @@ class App:
     def showPersons(self):
         # start the person GUI
         self.pgui = PersonGUI(self.master, self.working_directory)
+
+        # start the person GUI
         self.pgui.start()
 
     def amout_of_photos(self):
@@ -280,25 +285,34 @@ class App:
                 if file.endswith("jpg"):
                     self.amount_of_photos += 1
 
-    def import_csv_to_list(self, file_path):
-        if not os.path.exists(file_path):
-            data = ["male", "female", "diverse"]
-            return data
+    def on_close(self):
+        self.master.destroy()
 
-        with open(file_path, "r") as csv_file:
-            csv_reader = csv.reader(csv_file)
-            data = []
-            for row in csv_reader:
-                data.append("".join(row))
 
-            return data
+def import_csv_to_list(file_path) -> list[str]:
+    if not os.path.exists(file_path):
+        data = ["male", "female", "diverse"]
+        return data
+
+    with open(file_path, "r") as csv_file:
+        csv_reader = csv.reader(csv_file)
+        data = []
+        for row in csv_reader:
+            data.append("".join(row))
+
+        return data
 
 
 # Create the main window
 if __name__ == "__main__":
     window = tk.Tk()
+    # window.iconbitmap("Resources/icon.ico")
+
+    photo = tk.PhotoImage(file="Resources/icon.png")
+    window.iconphoto(False, photo)
+    window.geometry("800x800")
+
     app = App(window)
     # change window size
-    window.geometry("800x800")
 
     window.mainloop()
