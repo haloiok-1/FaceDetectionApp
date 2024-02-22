@@ -255,9 +255,17 @@ class App:
         return self.trainingError, print("[App]: Training complete")
 
     def start_facedetector(self):
+
+
+        # check if fd is already running
+        if hasattr(self, "fd"):
+            if self.fd is not None:
+                print("[App]: Face Detector is already running")
+                return
+
         print("[App]: Starting Face Detector")
-        fd = FaceDetector(self.master, self.working_directory)
-        fd.start()
+        self.fd = FaceDetector(self.master, self.working_directory)
+        self.fd.start()
 
     def amout_of_photos(self):
         for root, dirs, files in os.walk(self.working_directory):
