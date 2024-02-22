@@ -1,5 +1,4 @@
 import os
-import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import json
@@ -162,7 +161,6 @@ class App:
 
         # update the persons in the person GUI
         # check if the person GUI is already created
-        print(f"[App]: {self.pgui}")
 
         if self.pgui:
             self.pgui.update_grid()
@@ -238,7 +236,7 @@ class App:
         # progress bar
         # get amount of training photos
         self.amount_of_photos = 0
-        self.amout_of_photos()
+        self.fn_amount_of_photos()
         amount_of_photos = self.amount_of_photos
 
         self.progress["maximum"] = amount_of_photos + 3
@@ -279,7 +277,7 @@ class App:
         # start the person GUI
         self.pgui.start()
 
-    def amout_of_photos(self):
+    def fn_amount_of_photos(self):
         for root, dirs, files in os.walk(self.working_directory):
             for file in files:
                 if file.endswith("jpg"):
