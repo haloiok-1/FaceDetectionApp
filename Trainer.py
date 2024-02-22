@@ -1,3 +1,4 @@
+import json
 import os
 import pickle
 import numpy as np
@@ -6,12 +7,14 @@ import cv2
 
 
 class Trainer:
-    def __init__(self,working_dir, image_dir, cascade_path):
+    def __init__(self, working_dir, image_dir, cascade_path):
         self.amount_of_photos = 0
         self.working_dir = working_dir
         self.image_dir = image_dir
-        self.face_cascades = cv2.CascadeClassifier(cascade_path)
-        self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+
+        if not cascade_path == "":
+            self.face_cascades = cv2.CascadeClassifier(cascade_path)
+            self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.current_id = 0
         self.label_ids = {}
         self.x_train = []
@@ -103,6 +106,17 @@ class Trainer:
         self.train()
         self.save_labels()
 
+    def import_labels_from_json(self, json_file):
+        with open(json_file, "r") as f:
+            data = json.load(f)
+        self.label_ids = {}
+        self.current_id = 0
+        for item in data:
+            label = f"{item['firstname']} {item['lastname']}"
+            self.label_ids[label] = self.current_id
+            self.current_id += 1
+        print("[Trainer]: Labels imported from json")
+
     def getTrainingStatus(self):
         return self.trainingStatus
 
@@ -111,5 +125,8 @@ class Trainer:
 
 
 if __name__ == "__main__":
-    recognizer = Trainer("Resources/Persons", "Resources/Cascades/data/haarcascade_frontalface_default.xml")
+    recognizer = Trainer("Resources/Persons",
+                         "Resources/Persons",
+                         "Resources/Cascades/data/haarcascade_frontalface_default.xml")
+    recognizer.import_labels_from_json("Resources/Persons/persons.json")
     recognizer.process()
