@@ -111,22 +111,6 @@ class App:
             os.mkdir(self.photo_directory)
 
     def submit(self):
-        # check if folder with name already exists
-        if os.path.exists(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
-            messagebox.showinfo("Already Exists", "A folder with this name already exists", icon="info")
-            self.photo_button.config(state="normal")
-            return
-        else:
-            os.mkdir(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
-
-        self.current_person = Person(
-            name=self.entry_firstname.get(),
-            lastname=self.entry_lastname.get(),
-            age=self.entry_age.get(),
-            gender=self.entry_gender.cget("text"),
-            profile_pic_path="",
-            photo_folder_path=self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()
-        )
 
         firstname = self.entry_firstname.get()
         lastname = self.entry_lastname.get()
@@ -150,6 +134,22 @@ class App:
         # ask if really want to submit
         if not messagebox.askyesno("Submit", "Do you really want to submit?"):
             return
+
+        # check if folder with name already exists
+        if os.path.exists(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
+            messagebox.showinfo("Already Exists", "A folder with this name already exists", icon="info")
+            self.photo_button.config(state="normal")
+            return
+        else:
+            os.mkdir(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
+        self.current_person = Person(
+            name=self.entry_firstname.get(),
+            lastname=self.entry_lastname.get(),
+            age=self.entry_age.get(),
+            gender=self.entry_gender.cget("text"),
+            profile_pic_path="",
+            photo_folder_path=self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()
+        )
 
         print(f"[App]: Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
         self.saveInJSON()
@@ -255,7 +255,6 @@ class App:
         return self.trainingError, print("[App]: Training complete")
 
     def start_facedetector(self):
-
 
         # check if fd is already running
         if hasattr(self, "fd"):
