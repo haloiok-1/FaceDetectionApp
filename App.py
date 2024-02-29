@@ -11,9 +11,24 @@ import threading
 from Trainer import Trainer
 
 
+def import_csv_to_list(file_path) -> list[str]:
+    if not os.path.exists(file_path):
+        data = ["male", "female", "diverse", "other"]
+        return data
+
+    with open(file_path, "r") as csv_file:
+        csv_reader = csv.reader(csv_file)
+        data = []
+        for row in csv_reader:
+            data.append("".join(row))
+
+    return data
+
+
 class App:
     def __init__(self, master):
         # Variables
+        self.fd = None
         self.pgui = None
         self.trainingError = None
         self.amount_of_photos = 0
@@ -22,7 +37,6 @@ class App:
         self.working_directory = "Resources/"
         self.photo_directory = self.working_directory + "Persons/"
         self.master = master
-        self.master.protocol("WM_DELETE_WINDOW", self.on_close)
 
         genders = import_csv_to_list(self.working_directory + "genders.csv")
 
@@ -115,7 +129,7 @@ class App:
         # start the person GUI to display the persons
         self.showPersons()
 
-    def submit(self):
+    def submit(self) -> None:
         firstname = self.entry_firstname.get()
         lastname = self.entry_lastname.get()
         age = self.entry_age.get()
@@ -142,15 +156,15 @@ class App:
         # check if folder with name already exists
         if os.path.exists(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
             messagebox.showinfo("Already Exists", "A folder with this name already exists", icon="info")
-            self.photo_button.config(state="normal")
             return
         else:
             os.mkdir(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
+
         self.current_person = Person(
-            name=self.entry_firstname.get(),
-            lastname=self.entry_lastname.get(),
-            age=self.entry_age.get(),
-            gender=self.entry_gender.cget("text"),
+            firstname=firstname,
+            lastname=lastname,
+            age=age,
+            gender=gender,
             profile_pic_path="",
             photo_folder_path=self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()
         )
@@ -167,7 +181,7 @@ class App:
         else:
             print("[App]: Person GUI not created yet")
 
-    def change_directory(self):
+    def change_directory(self) -> None:
         working_directory = tk.filedialog.askdirectory(title="Changing Working Directory for depositing further Photos",
                                                        initialdir=self.working_directory)
         if working_directory:
@@ -175,13 +189,14 @@ class App:
             self.working_directory = working_directory
 
             # check if the path is too long to display
-            if len(working_directory) > 30:
+            if len(working_directory) > 20:
                 # use the last 3 words of the path
-                self.wd_button.config(text=".../" + "/".join(working_directory.split("/")[-3:]))
+                self.wd_button.config(text=".../" + "/".join(working_directory.split("/")[-2:]))
             else:
+                print(1)
                 self.wd_button.config(text=working_directory)
 
-    def saveInJSON(self):
+    def saveInJSON(self) -> None:
         # open file to read and write in json format
         person_dict = {"firstname": self.current_person.firstname, "lastname": self.current_person.lastname,
                        "age": self.current_person.age, "gender": self.current_person.gender,
@@ -214,7 +229,7 @@ class App:
                 f.write("\n]")
                 print(f"[App]: Informationen erfolgreich in {f} gespeichert.")
 
-    def start_phototaker(self):
+    def start_phototaker(self) -> None:
         print("[App]: Starting Phototaker")
 
         # print all information of the current person
@@ -224,7 +239,7 @@ class App:
         pt = Phototaker(self.master, self.current_person, self.photo_directory)
         pt.start()
 
-    def start_face_training(self):
+    def start_face_training(self) -> None:
         print("[App]: Starting Face Training")
         face_recognizer = Trainer(self.working_directory, self.photo_directory,
                                   "Resources/Cascades/data/haarcascade_frontalface_default.xml")
@@ -265,7 +280,7 @@ class App:
         self.trainingError = face_recognizer.process()
         return self.trainingError, print("[App]: Training complete")
 
-    def start_facedetector(self):
+    def start_facedetector(self) -> None:
 
         # check if fd is already running
         if hasattr(self, "fd"):
@@ -277,31 +292,18 @@ class App:
         self.fd = FaceDetector(self.master, self.working_directory)
         self.fd.start()
 
-    def showPersons(self):
+    def showPersons(self) -> None:
         # start the person GUI
         self.pgui = PersonGUI(self.master, self.working_directory)
 
         # start the person GUI
         self.pgui.start()
 
-    def fn_amount_of_photos(self):
+    def fn_amount_of_photos(self) -> None:
         for root, dirs, files in os.walk(self.working_directory):
             for file in files:
                 if file.endswith("jpg"):
                     self.amount_of_photos += 1
-
-    def import_csv_to_list(self, file_path):
-        if not os.path.exists(file_path):
-            data = ["male", "female", "diverse", "other"]
-            return data
-
-    with open(file_path, "r") as csv_file:
-        csv_reader = csv.reader(csv_file)
-        data = []
-        for row in csv_reader:
-            data.append("".join(row))
-
-        return data
 
 
 # Create the main window
