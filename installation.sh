@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# check if python is installed
+if ! [ -x "$(command -v python)" ]; then
+  echo 'Error: python is not installed.' >&2
+  exit 1
+fi
+
 # Liste der Module
 MODULES=(
  "numpy==1.26.3"

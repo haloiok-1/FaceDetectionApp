@@ -5,6 +5,8 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import threading
 
+from Trainer import Trainer
+
 
 class FaceDetector:
 
@@ -18,11 +20,14 @@ class FaceDetector:
         print("[FaceDetector]: Training data loaded")
         self.labels = {}
 
-        with open(working_directory + "/labels.pickle", "rb") as f:
-            og_labels = pickle.load(f)
-            self.labels = {v: k for k, v in og_labels.items()}
-        self.parent = parent
-        self.working_directory = working_directory
+        trainer = Trainer(working_directory, "", "")
+        trainer.import_labels_from_json(working_directory + "/Persons/persons.json")
+        # add the first label a blank label
+        self.labels[0] = ""
+        # add the rest of the labels
+        for key, value in trainer.label_ids.items():
+            self.labels[value] = key
+
 
         # Create a window
         self.window = tk.Toplevel(parent)
@@ -58,12 +63,13 @@ class FaceDetector:
                 if 55 <= conf <= 99:
                     font = cv2.FONT_HERSHEY_SIMPLEX
                     confRounded = round(conf, 1)
-                    name = ((self.labels[id_]) + " " + str(int(confRounded)) + "%")
+                    name = self.labels.get(id_, "Unknown")
+                    screeninfo = ((self.labels[id_]) + " " + str(int(confRounded)) + "%")
                     color = (100, 255, 100)
                     stroke = 1
                     name = name.replace("_", " ")
                     name = name.title()
-                    cv2.putText(img, name, (x, y - 5), font, 0.5, color, stroke, cv2.LINE_AA)
+                    cv2.putText(img, screeninfo, (x, y - 5), font, 0.5, color, stroke, cv2.LINE_AA)
                     cv2.rectangle(img, (x, y), (x + w, y + h), (100, 255, 100), 2)
 
                 elif conf > 100:
@@ -80,8 +86,6 @@ class FaceDetector:
             # writing the processed image to the img variable
             self.img = img
 
-        print("[FaceDetector]: detection closed")
-
     def display_camera_stream(self):
         while self.running:
             if self.img is not None:
@@ -90,12 +94,11 @@ class FaceDetector:
                 img_tk = ImageTk.PhotoImage(image=img)
 
                 # Display the image in the tkinter label
-                self.video_label.config(image=img_tk)
-                self.video_label.image = img_tk
-        else:
-            print("[FaceDetector]:No image to display")
+                if self.running:
+                    self.video_label.config(image=img_tk)
+                    self.video_label.image = img_tk
 
-        print("[FaceDetector]: Video stream closed")
+
 
     def start(self):
         print("[FaceDetector]: started...")
