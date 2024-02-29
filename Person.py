@@ -1,9 +1,10 @@
 import os
+import json
 
 
 class Person:
-    def __init__(self, name, lastname, age, gender, profile_pic_path, photo_folder_path):
-        self.name = name
+    def __init__(self, firstname, lastname, age, gender, profile_pic_path, photo_folder_path):
+        self.firstname = firstname
         self.lastname = lastname
         self.age = age
         self.gender = gender
@@ -21,17 +22,21 @@ class Person:
 
     def __str__(self):
         return (
-            f"{self.name} {self.lastname} (age: {self.age}, gender: {self.gender},"
+            f"{self.firstname} {self.lastname} (age: {self.age}, gender: {self.gender},"
             f" profile picture: {self.profile_pic_path}, photo folder: {self.photo_folder_path})"
         )
 
     def display_info(self):
         print(self)
+    def current_amount_of_photos(self):
+        # check if the directory exists
+        if os.path.isdir(self.photo_folder_path):
+            return len(os.listdir(self.photo_folder_path))
 
 
 if __name__ == "__main__":
     p = Person(
-        name="John",
+        firstname="John",
         lastname="Doe",
         age=30,
         gender="male",
@@ -39,3 +44,17 @@ if __name__ == "__main__":
         photo_folder_path="path/to/photo/folder",
     )
     print(p)
+
+
+def dict_to_person(d: dict) -> Person:
+    return Person(
+        firstname=d["firstname"],
+        lastname=d["lastname"],
+        age=d["age"],
+        gender=d["gender"],
+        profile_pic_path=d["profile_pic_path"],
+        photo_folder_path=d["photo_folder_path"],
+    )
+
+
+

@@ -5,6 +5,7 @@ import json
 import csv
 from FaceDetector import FaceDetector
 from Person import Person
+from PersonGUI import PersonGUI
 from Phototaker import Phototaker
 import threading
 from Trainer import Trainer
@@ -13,6 +14,7 @@ from Trainer import Trainer
 class App:
     def __init__(self, master):
         # Variables
+        self.pgui = None
         self.trainingError = None
         self.amount_of_photos = 0
         self.current_person = None
@@ -20,11 +22,15 @@ class App:
         self.working_directory = "Resources/"
         self.photo_directory = self.working_directory + "Persons/"
         self.master = master
+        self.master.protocol("WM_DELETE_WINDOW", self.on_close)
 
-        genders = self.import_csv_to_list(self.working_directory + "genders.csv")
+        genders = import_csv_to_list(self.working_directory + "genders.csv")
 
         master.title("Person Detector")
-        master.geometry("500x400")  # Setzt die Größe des Fensters auf 600x400 Pixel
+        master.geometry("1000x600")  # Setzt die Größe des Fensters auf 600x400 Pixel
+        print("[App]: Starting the application")
+        # print the dimensions of the window
+        print(f"[App]: Window size: {master.winfo_width()}x{master.winfo_height()}")
 
         # Create a frame for the left column
         left_frame = tk.Frame(master)
@@ -63,18 +69,14 @@ class App:
         self.submit_button = tk.Button(left_frame, text="Submit", command=self.submit, padx=20, pady=10)
         self.submit_button.pack()
 
-        # Add the labels and entries to the right frame
-        self.label_takePhotos = tk.Label(right_frame, text="Fotos aufnehmen")
-        self.label_takePhotos.pack(pady=(20, 10))  # Add some padding above and below the label
-
-        self.photo_button = tk.Button(right_frame, text="Start Shooting", command=self.start_phototaker,
-                                      padx=20, pady=10, state="disabled")
-        self.photo_button.pack()
-
         # Create a button to change the working directory
         self.wd_button = tk.Button(right_frame, text=self.working_directory, command=self.change_directory,
                                    compound=tk.LEFT)
         self.wd_button.place(relx=1.0, rely=1.0, anchor=tk.SE)
+
+        # add a label for title
+        self.label_title = tk.Label(right_frame, text="Detector", font=("Arial", 18, "bold"))
+        self.label_title.pack(pady=(10, 0))
 
         self.training_label = tk.Label(right_frame, text="Face Training")
         self.training_label.pack(pady=(20, 0))
@@ -110,8 +112,10 @@ class App:
         if not os.path.exists(self.photo_directory):
             os.mkdir(self.photo_directory)
 
-    def submit(self):
+        # start the person GUI to display the persons
+        self.showPersons()
 
+    def submit(self):
         firstname = self.entry_firstname.get()
         lastname = self.entry_lastname.get()
         age = self.entry_age.get()
@@ -154,7 +158,14 @@ class App:
         print(f"[App]: Firstname: {firstname}, Lastname: {lastname}, Age: {age}, Gender: {gender}")
         self.saveInJSON()
         # os.mkdir(self.working_directory + firstname + "_" + lastname)
-        self.photo_button.config(state="normal", borderwidth=5, relief="raised")
+
+        # update the persons in the person GUI
+        # check if the person GUI is already created
+
+        if self.pgui:
+            self.pgui.update_grid()
+        else:
+            print("[App]: Person GUI not created yet")
 
     def change_directory(self):
         working_directory = tk.filedialog.askdirectory(title="Changing Working Directory for depositing further Photos",
@@ -172,7 +183,7 @@ class App:
 
     def saveInJSON(self):
         # open file to read and write in json format
-        person_dict = {"firstname": self.current_person.name, "lastname": self.current_person.lastname,
+        person_dict = {"firstname": self.current_person.firstname, "lastname": self.current_person.lastname,
                        "age": self.current_person.age, "gender": self.current_person.gender,
                        "profile_pic_path": "", "photo_folder_path": self.current_person.photo_folder_path}
 
@@ -225,7 +236,7 @@ class App:
         # progress bar
         # get amount of training photos
         self.amount_of_photos = 0
-        self.amout_of_photos()
+        self.fn_amount_of_photos()
         amount_of_photos = self.amount_of_photos
 
         self.progress["maximum"] = amount_of_photos + 3
@@ -266,7 +277,14 @@ class App:
         self.fd = FaceDetector(self.master, self.working_directory)
         self.fd.start()
 
-    def amout_of_photos(self):
+    def showPersons(self):
+        # start the person GUI
+        self.pgui = PersonGUI(self.master, self.working_directory)
+
+        # start the person GUI
+        self.pgui.start()
+
+    def fn_amount_of_photos(self):
         for root, dirs, files in os.walk(self.working_directory):
             for file in files:
                 if file.endswith("jpg"):
@@ -277,17 +295,25 @@ class App:
             data = ["male", "female", "diverse", "other"]
             return data
 
-        with open(file_path, "r") as csv_file:
-            csv_reader = csv.reader(csv_file)
-            data = []
-            for row in csv_reader:
-                data.append("".join(row))
+    with open(file_path, "r") as csv_file:
+        csv_reader = csv.reader(csv_file)
+        data = []
+        for row in csv_reader:
+            data.append("".join(row))
 
-            return data
+        return data
 
 
 # Create the main window
 if __name__ == "__main__":
     window = tk.Tk()
+    # window.iconbitmap("Resources/icon.ico")
+
+    photo = tk.PhotoImage(file="Resources/icon.png")
+    window.iconphoto(False, photo)
+    window.geometry("800x800")
+
     app = App(window)
+    # change window size
+
     window.mainloop()

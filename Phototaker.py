@@ -1,3 +1,4 @@
+import json
 import os
 import tkinter as tk
 from tkinter import messagebox
@@ -49,7 +50,7 @@ class Phototaker:
         self.close_button.pack()
 
     def start(self):
-        print(f"[PhotoTaker]: Starting the photo taker for {self.current_person.name} {self.current_person.lastname}")
+        print(f"[PhotoTaker]: Starting the photo taker for {self.current_person.firstname} {self.current_person.lastname}")
         # Start the camera stream
         threading.Thread(target=self.display_camera_stream).start()
         self.window.mainloop()
@@ -169,10 +170,21 @@ class Phototaker:
         self.current_person.profile_pic_path = profile_pic_path
         print(f"[PhotoTaker]: Profile picture set to {profile_pic_path}")
 
+        # update the profile picture path in the persons.json file
+        with open(self.working_directory + "persons.json", "r") as file:
+            persons = json.load(file)
+            for person in persons:
+                if person["firstname"] == self.current_person.firstname and person["lastname"] == self.current_person.lastname:
+                    person["profile_pic_path"] = profile_pic_path
+                    break
+        with open(self.working_directory + "persons.json", "w") as file:
+            json.dump(persons, file, indent=4)
+            print(f"[PhotoTaker]: Profile picture path updated in persons.json")
+
 
 if __name__ == "__main__":
     p = Person(
-        name="John",
+        firstname="John",
         lastname="Doe",
         age=30,
         gender="male",
