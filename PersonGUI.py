@@ -2,6 +2,9 @@ import os
 import shutil
 import tkinter as tk
 from tkinter import messagebox, filedialog
+
+import cv2
+
 from Phototaker import Phototaker
 from PIL import Image, ImageTk
 
@@ -56,7 +59,6 @@ class PersonGUI:
         # pin the button to the bottom of the window
         self.update_button.pack(side="bottom")
 
-
     def start(self):
         print("[PersonGUI]: Starting the person GUI")
         self.get_persons()
@@ -78,6 +80,8 @@ class PersonGUI:
         print(f"[PersonGUI]: Found {len(self.persons)} persons")
 
     def create_grid_for_persons(self):
+        camera_connected = check_if_camera_is_connected()
+
         persons = self.persons
 
         for i, p in enumerate(persons):
@@ -85,7 +89,6 @@ class PersonGUI:
             # Create a name label for the person
             label = tk.Label(self.grid_frame, text=p.firstname + " " + p.lastname, font=("Arial", 12, "bold"))
             label.grid(row=i, column=0)
-
 
             # Create a button to open the persons photo folder
             button = tk.Button(self.grid_frame, text="Open photo folder",
@@ -101,14 +104,14 @@ class PersonGUI:
             photo_taker_button = tk.Button(self.grid_frame, text="Take Photos",
                                            command=lambda p=p: self.open_photo_taker(p),
                                            padx=0, pady=10, bg=("#32936F"))
+            if not camera_connected: photo_taker_button.config(state="disabled")
             photo_taker_button.grid(row=i, column=4)
 
             # label for amount of photos in folder
             amount_of_photos_label = tk.Label(self.grid_frame, text=f"Amount of photos: {p.current_amount_of_photos()}",
-                                              padx=20, pady=10, font=("Arial", 12, "italic"), fg="black" if p.current_amount_of_photos() > 100 else "#BD263C")
+                                              padx=20, pady=10, font=("Arial", 12, "italic"),
+                                              fg="black" if p.current_amount_of_photos() > 100 else "#BD263C")
             amount_of_photos_label.grid(row=i, column=5)
-
-
 
     def open_fileexplorer_for_person(self, person: Person):
         # just to see the photos in the folder
@@ -150,6 +153,14 @@ class PersonGUI:
             widget.destroy()
         # create the grid again
         self.create_grid_for_persons()
+
+
+def check_if_camera_is_connected() -> bool:
+    try:
+        check, img = cv2.VideoCapture(0)  # check if the camera is connected
+        return check
+    except:
+        return False
 
 
 if __name__ == "__main__":

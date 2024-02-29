@@ -3,6 +3,9 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import json
 import csv
+
+import cv2
+
 from FaceDetector import FaceDetector
 from Person import Person
 from PersonGUI import PersonGUI
@@ -23,6 +26,16 @@ def import_csv_to_list(file_path) -> list[str]:
             data.append("".join(row))
 
     return data
+
+
+def check_if_camera_is_connected() -> bool:
+    try:
+        check, img = cv2.VideoCapture(0)  # check if the camera is connected
+
+        return check
+
+    except Exception as e:
+        return False
 
 
 class App:
@@ -116,6 +129,8 @@ class App:
         self.face_detection_button = tk.Button(right_frame, text="Start Face Detection",
                                                command=self.start_facedetector,
                                                padx=20, pady=10)
+        if not check_if_camera_is_connected(): # check if the camera is connected
+            self.face_detection_button.config(state="disabled", text="No Camera", background="grey")
         self.face_detection_button.pack()
 
         # check if working directory exists
