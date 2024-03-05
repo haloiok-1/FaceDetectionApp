@@ -93,8 +93,16 @@ class FaceDetector:
 
                 # Display the image in the tkinter label
                 if self.running:
-                    self.video_label.config(image=img_tk)
-                    self.video_label.image = img_tk
+                    #check if the window is still open
+                    try:
+                        self.video_label.config(image=img_tk)
+                        self.video_label.image = img_tk
+
+                    except tk.TclError:
+                        print("[FaceDetector]: Window closed")
+                        self.stop()
+                        break
+
 
     def start(self):
         print("[FaceDetector]: started...")

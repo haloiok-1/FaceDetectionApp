@@ -25,6 +25,8 @@ class PersonGUI:
         # expand the frame to fill the top half of the window
         self.title_frame.pack(fill="both")
 
+
+
         self.separator = tk.Frame(height=2, bd=1, relief="sunken")
         self.separator.pack(fill="x")
 
@@ -42,8 +44,10 @@ class PersonGUI:
         # expand the frame to fill the bottom half of the window
         self.bottom_frame.pack(fill="both")
 
-        self.label = tk.Label(self.title_frame, text="List of known Persons", font=("Arial", 18))
-        self.label.pack()
+        self.title_label = tk.Label(self.title_frame, text="List of known Persons", font=("Arial", 18))
+        self.title_label.pack()
+
+
 
         self.get_persons_button = tk.Button(self.bottom_frame, text="Get Persons", command=self.get_persons, padx=20,
                                             pady=10)
@@ -59,9 +63,18 @@ class PersonGUI:
         # pin the button to the bottom of the window
         self.update_button.pack(side="bottom")
 
+        self.amount_persons_label = tk.Label(self.title_frame, text="Initialising...",
+                                             font=("Arial", 12))
+        self.amount_persons_label.pack()
+
     def start(self):
         print("[PersonGUI]: Starting the person GUI")
         self.get_persons()
+
+        # get amount folders in the persons folder
+        amount_of_folders = len([name for name in os.listdir(self.working_directory) if
+                                 os.path.isdir(os.path.join(self.working_directory, name))])
+        self.amount_persons_label.config(text=f"Amount of persons: {amount_of_folders}")
 
         self.create_grid_for_persons()
 
@@ -71,8 +84,14 @@ class PersonGUI:
         try:
             with open(self.working_directory + "persons.json", "r") as file:
                 persons = json.load(file)
-        except FileNotFoundError:
-            messagebox.showerror("Error", "No persons found")
+
+        except Exception as e:
+            if type(e) is  FileNotFoundError:
+                messagebox.showerror("Error", "Your persons.json file is missing. Please create it.")
+            if type(e) is PermissionError:
+                messagebox.showerror("Error", "You do not have permission to access the persons.json file.")
+            if type(e) is json.decoder.JSONDecodeError:
+                messagebox.showerror("Error", "Your persons.json file is corrupted. Please fix it or delete it.")
             return
 
         for person in persons:

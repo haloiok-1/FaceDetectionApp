@@ -42,6 +42,7 @@ def check_if_camera_is_connected() -> bool:
 
 
 class App:
+
     def __init__(self, master):
         # Variables
         self.fd = None
@@ -215,20 +216,29 @@ class App:
 
     def saveInJSON(self) -> None:
         # open file to read and write in json format
+
         person_dict = {"firstname": self.current_person.firstname, "lastname": self.current_person.lastname,
                        "age": self.current_person.age, "gender": self.current_person.gender,
-                       "profile_pic_path": "", "photo_folder_path": self.current_person.photo_folder_path}
+                       "profile_pic_path": "", "photo_folder_path": self.current_person.photo_folder_path,
+                       "tracker": ""}
 
         try:
             with open(self.photo_directory + "persons.json", "r") as f:
                 lines = f.readlines()
 
-            del lines[-1]
-            last_line = lines[-1]
+            # check if the file has only one line
+            if lines[0] == "[]":
+                # delete all the lines
+                lines[0] = '[\n'
+                print("[App]: File is empty. Replacing with new data.")
 
-            # add to the penultimate line a comma
-            last_line = last_line[:-1] + "," + "\n"
-            lines[-1] = last_line
+            else:
+                del lines[-1]
+                last_line = lines[-1]
+
+                # add to the penultimate line a comma
+                last_line = last_line[:-1] + "," + "\n"
+                lines[-1] = last_line
 
             with open(self.photo_directory + "persons.json", "w") as f:
                 f.writelines(lines)
@@ -238,8 +248,14 @@ class App:
                 print(f"[App]: Informationen erfolgreich in {self.photo_directory}persons.json gespeichert.")
 
         except Exception as e:
-            print(f"[App]: {e}")
+            print(f"[App]: {e} in line {e.__traceback__.tb_lineno}")
             print("[App]: File not found. Creating new file.")
+            try:
+                #delete the file
+                os.remove(self.photo_directory + "persons.json")
+            except:
+                pass
+
             with open(self.photo_directory + "persons.json", "a") as f:
                 f.write("[\n")
                 json.dump(person_dict, f, indent=4)

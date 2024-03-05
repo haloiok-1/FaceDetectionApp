@@ -10,7 +10,6 @@ class Person:
     gender: str
     profile_pic_path: str
     photo_folder_path: str
-    tracker: cv2.Tracker
 
     def __init__(self, firstname, lastname, age, gender, profile_pic_path, photo_folder_path):
         self.firstname = firstname
@@ -19,7 +18,7 @@ class Person:
         self.gender = gender
         self.profile_pic_path = profile_pic_path
         self.photo_folder_path = photo_folder_path
-        self.tracker = cv2.Tracker()
+        self.tracker = None
 
     def verify(self):
         # Verify that the profile picture exists
