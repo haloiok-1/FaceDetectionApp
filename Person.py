@@ -1,8 +1,17 @@
 import os
+import cv2
 import json
 
 
 class Person:
+    firstname: str
+    lastname: str
+    age: int
+    gender: str
+    profile_pic_path: str
+    photo_folder_path: str
+    tracker: cv2.Tracker
+
     def __init__(self, firstname, lastname, age, gender, profile_pic_path, photo_folder_path):
         self.firstname = firstname
         self.lastname = lastname
@@ -10,6 +19,7 @@ class Person:
         self.gender = gender
         self.profile_pic_path = profile_pic_path
         self.photo_folder_path = photo_folder_path
+        self.tracker = cv2.Tracker()
 
     def verify(self):
         # Verify that the profile picture exists
@@ -28,10 +38,17 @@ class Person:
 
     def display_info(self):
         print(self)
+
     def current_amount_of_photos(self):
         # check if the directory exists
         if os.path.isdir(self.photo_folder_path):
             return len(os.listdir(self.photo_folder_path))
+
+    def getTracker(self):
+        return self.tracker
+
+    def setTracker(self, tracker):
+        self.tracker = tracker
 
 
 if __name__ == "__main__":
