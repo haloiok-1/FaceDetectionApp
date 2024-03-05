@@ -140,7 +140,7 @@ class Phototaker:
         if not os.path.isdir(self.photo_directory):
             os.makedirs(self.photo_directory)
 
-        while self.counter < counter + 100:
+        while self.counter < counter + 300:
             ret, frame = self.camera.read()
             photo_path = f"{self.photo_directory}/photo_{self.counter}.jpg"
             # flip the frame
