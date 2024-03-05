@@ -28,7 +28,6 @@ class FaceDetector:
         for key, value in trainer.label_ids.items():
             self.labels[value] = key
 
-
         # Create a window
         self.window = tk.Toplevel(parent)
         self.window.title("Face Detector")
@@ -67,8 +66,7 @@ class FaceDetector:
                     screeninfo = ((self.labels[id_]) + " " + str(int(confRounded)) + "%")
                     color = (100, 255, 100)
                     stroke = 1
-                    name = name.replace("_", " ")
-                    name = name.title()
+                    name = name.replace("_", " ").title()
                     cv2.putText(img, screeninfo, (x, y - 5), font, 0.5, color, stroke, cv2.LINE_AA)
                     cv2.rectangle(img, (x, y), (x + w, y + h), (100, 255, 100), 2)
 
@@ -97,8 +95,6 @@ class FaceDetector:
                 if self.running:
                     self.video_label.config(image=img_tk)
                     self.video_label.image = img_tk
-
-
 
     def start(self):
         print("[FaceDetector]: started...")
