@@ -31,11 +31,14 @@ def import_csv_to_list(file_path) -> list[str]:
 def check_if_camera_is_connected() -> bool:
     try:
         check, img = cv2.VideoCapture(0)  # check if the camera is connected
+        if check:
+            print("[App]: Camera is connected")
 
         return check
 
     except Exception as e:
-        return False
+        print(f"[App]: {e}")
+        return True
 
 
 class App:
@@ -129,7 +132,7 @@ class App:
         self.face_detection_button = tk.Button(right_frame, text="Start Face Detection",
                                                command=self.start_facedetector,
                                                padx=20, pady=10)
-        if not check_if_camera_is_connected(): # check if the camera is connected
+        if not check_if_camera_is_connected():  # check if the camera is connected
             self.face_detection_button.config(state="disabled", text="No Camera", background="grey")
         self.face_detection_button.pack()
 
@@ -164,15 +167,14 @@ class App:
             messagebox.showerror("Error", "Please select a gender from the dropdown", icon="error")
             return
 
-        # ask if really want to submit
-        if not messagebox.askyesno("Submit", "Do you really want to submit?"):
-            return
-
         # check if folder with name already exists
         if os.path.exists(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get()):
             messagebox.showinfo("Already Exists", "A folder with this name already exists", icon="info")
             return
         else:
+            # ask if really want to submit
+            if not messagebox.askyesno("Submit", "Do you really want to submit?"):
+                return
             os.mkdir(self.photo_directory + self.entry_firstname.get() + "_" + self.entry_lastname.get())
 
         self.current_person = Person(
@@ -233,7 +235,7 @@ class App:
                 # write the new person information
                 json.dump(person_dict, f, indent=4)
                 f.write("\n]")
-                print(f"[App]: Informationen erfolgreich in {self.photo_directory}/persons.json gespeichert.")
+                print(f"[App]: Informationen erfolgreich in {self.photo_directory}persons.json gespeichert.")
 
         except Exception as e:
             print(f"[App]: {e}")
