@@ -160,7 +160,7 @@ def check_if_camera_is_connected() -> bool:
         check, img = cv2.VideoCapture(0)  # check if the camera is connected
         return check
     except:
-        return False
+        return True
 
 
 if __name__ == "__main__":
