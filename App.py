@@ -12,6 +12,7 @@ from PersonGUI import PersonGUI
 from Phototaker import Phototaker
 import threading
 from Trainer import Trainer
+import webbrowser
 
 
 def import_csv_to_list(file_path) -> list[str]:
@@ -39,6 +40,15 @@ def check_if_camera_is_connected() -> bool:
     except Exception as e:
         print(f"[App]: {e}")
         return True
+
+
+def open_documentation() -> None:
+    # get the current working directory
+    working_directory = os.getcwd()
+    # open the documentation
+
+    webbrowser.open(working_directory + "/Website/Documentation Homepage.html")
+    print("[App]: Opened documentation")
 
 
 class App:
@@ -104,6 +114,10 @@ class App:
         self.wd_button = tk.Button(right_frame, text=self.working_directory, command=self.change_directory,
                                    compound=tk.LEFT)
         self.wd_button.place(relx=1.0, rely=1.0, anchor=tk.SE)
+
+        # add a button to open the documentation on the buttom left
+        self.documentation_button = tk.Button(left_frame, text="Documentation", command=open_documentation)
+        self.documentation_button.place(relx=0.0, rely=1.0, anchor=tk.SW)
 
         # add a label for title
         self.label_title = tk.Label(right_frame, text="Detector", font=("Arial", 18, "bold"))
@@ -251,7 +265,7 @@ class App:
             print(f"[App]: {e} in line {e.__traceback__.tb_lineno}")
             print("[App]: File not found. Creating new file.")
             try:
-                #delete the file
+                # delete the file
                 os.remove(self.photo_directory + "persons.json")
             except:
                 pass
