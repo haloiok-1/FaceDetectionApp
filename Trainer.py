@@ -23,6 +23,12 @@ class Trainer:
         self.amount_bad_photos = 0
 
     def load_images(self):
+        # check if there are even folders or images in the persons folder
+        if len([name for name in os.listdir(self.image_dir) if os.path.isdir(os.path.join(self.image_dir, name))]) == 0:
+            print("[Trainer]: No folders found in the persons folder")
+            self.trainingStatus = -1
+            return True
+
         print("[Trainer]: Loading images...")
         for root, dirs, files in os.walk(self.image_dir):
             for file in files:

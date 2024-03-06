@@ -290,7 +290,7 @@ class App:
         print("[App]: Starting Face Training")
         face_recognizer = Trainer(self.working_directory, self.photo_directory,
                                   "Resources/Cascades/data/haarcascade_frontalface_default.xml")
-        threading.Thread(target=self.worker_face_training, args=(face_recognizer,)).start()
+        face_recognizer_thread = threading.Thread(target=self.worker_face_training, args=(face_recognizer,)).start()
 
         # disable the button
         self.training_button.config(state="disabled", text="Training...", background="grey")
@@ -299,6 +299,13 @@ class App:
         # get amount of training photos
         self.amount_of_photos = 0
         self.fn_amount_of_photos()
+
+        # check if there are photos
+        if self.amount_of_photos == -1:
+            self.trainingstatus_label.config(text="No photos found!", fg="red")
+            self.training_button.config(state="normal", text="Start Training", background="SystemButtonFace")
+            return
+
         amount_of_photos = self.amount_of_photos
 
         self.progress["maximum"] = amount_of_photos + 3
@@ -323,6 +330,7 @@ class App:
         self.training_button.config(state="normal", text="Start Training", background="SystemButtonFace")
         self.trainingstatus_label.config(text="Training complete", fg="green")
 
+
     def worker_face_training(self, face_recognizer):
         self.trainingError = face_recognizer.process()
         return self.trainingError, print("[App]: Training complete")
@@ -330,10 +338,12 @@ class App:
     def start_facedetector(self) -> None:
 
         # check if fd is already running
+        '''
         if hasattr(self, "fd"):
             if self.fd is not None:
                 print("[App]: Face Detector is already running")
                 return
+        '''
 
         print("[App]: Starting Face Detector")
         self.fd = FaceDetector(self.master, self.working_directory)
@@ -347,6 +357,13 @@ class App:
         self.pgui.start()
 
     def fn_amount_of_photos(self) -> None:
+        # check if there are person folders in the photo directory and check if there are photos in the folders
+        if len([name for name in os.listdir(self.photo_directory)
+                if os.path.isdir(os.path.join(self.photo_directory, name))]) == 0:
+            print("[Trainer]: No folders found in the persons folder")
+            self.amount_of_photos = -1
+            return
+
         for root, dirs, files in os.walk(self.working_directory):
             for file in files:
                 if file.endswith("jpg"):
