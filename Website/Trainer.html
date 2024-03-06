@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python GUI Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1><a href="Documentation Homepage.html">Person Detector Application</a></h1>
+        <p>Documentation of the Trainer Class</p>
+    </header>
+
+    <div class="main-content">
+        <div class="left-column">
+            <h1>Class: Trainer</h1>
+            <section>
+                <h2>General Function:</h2>
+                <p>
+                    The Trainer class is responsible for training a face recognition model using images from a specified directory. It detects faces in images, assigns labels to them, and trains the model to recognize those faces. The class provides methods to load images, check data integrity, train the model, and save labels.
+                </p>
+            </section>
+
+            <section>
+                <h2>How <strong>Haar Cascades</strong> Work:</h2>
+                <p>
+                    <strong>Haar cascades</strong> are <strong>machine learning-based classifiers</strong> used for <strong>object detection</strong>. They work by applying a series of feature-based classifiers to subsections of an image, known as "<strong>Haar-like features</strong>." These features are simple patterns, such as <strong>edges</strong>, <strong>corners</strong>, or <strong>lines</strong>, that are computationally efficient to compute.
+                </p>
+                <p>
+                    During the <strong>training phase</strong>, the <strong>Haar cascades</strong> algorithm learns to identify patterns that are <strong>characteristic</strong> of the object being detected, such as <strong>faces</strong>. These patterns are stored as a <strong>cascade of classifiers</strong>, with each classifier making a decision based on a subset of features. During <strong>detection</strong>, the <strong>cascade</strong> is applied to different regions of the image, and if a region matches the pattern described by the <strong>cascade</strong>, it is considered a <strong>positive detection</strong>.
+                </p>
+                <p>
+                    <strong>Haar cascades</strong> are particularly effective for tasks like <strong>face detection</strong> because they can quickly scan an image at <strong>multiple scales</strong> and <strong>orientations</strong>, making them suitable for <strong>real-time applications</strong>.
+                </p>
+            </section>
+
+
+        </div>
+        <div class="right-column">
+            <section class="explanation">
+                <h2>Functions:</h2>
+                <div class="function">
+                    <li><strong>__init__(working_dir, image_dir, cascade_path)</strong>: Initializes the Trainer object with the specified working directory, image directory, and cascade path.</li>
+                </div>
+                <div class="function">
+                    <li><strong>load_images()</strong>: Loads images from the specified image directory, detects faces, and assigns labels.</li>
+                </div>
+                <div class="function">
+                    <li><strong>check_data()</strong>: Checks if the training data is valid and sufficient for training.</li>
+                </div>
+                <div class="function">
+                    <li><strong>train()</strong>: Trains the face recognition model using the loaded images and labels.</li>
+                </div>
+                <div class="function">
+                    <li><strong>save_labels()</strong>: Saves the labels assigned to the training data.</li>
+                </div>
+                <div class="function">
+                    <li><strong>process()</strong>: Performs the complete training process, including loading images, training the model, and saving labels.</li>
+                </div>
+                <div class="function">
+                    <li><strong>import_labels_from_json(json_file)</strong>: Imports labels from a JSON file.</li>
+                </div>
+                <div class="function">
+                    <li><strong>getTrainingStatus()</strong>: Returns the current training status.</li>
+                </div>
+                <div class="function">
+                    <li><strong>getAmountOfPhotos()</strong>: Returns the total number of photos used for training.</li>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="https://github.com/haloiok-1/FaceDetectionApp">GitHub Repository</a>, </p>
+        <p>Copyright &copy; 2024 Czylonio. All rights reserved.</p>
+    </footer>
+</body>
+</html>

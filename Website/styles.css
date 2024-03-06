@@ -1,0 +1,208 @@
+html {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; /* light_grey ist nicht eine gültige Farbe, hier #f0f0f0 als Ersatz */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.left-column section
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    padding-left: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+}
+
+h1{
+   font-size: 30px;
+}
+
+h2 {
+    color: #333;
+}
+
+h3 {
+    color: #444;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+a {
+    color: #f05d23;
+    text-decoration: none;
+}
+
+pre {
+    background-color: #f9f9f9;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-width: 60%;
+    font-size: 14px;+
+    margin-top: 4px;
+
+}
+
+code {
+    font-family: cascadia code, monospace;
+
+}
+
+.classes {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+.simpleInfo{
+    color: red;
+    padding: 5px;
+    background-color: #dddddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 52%;
+    font-size: 12px;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    padding-top: 20px;
+    text-align: center;
+    width: 90%;
+    margin-top: 50px;
+
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+
+}
+
+footer p {
+    margin: 0;
+}
+
+.explanation {
+    margin-left: 20px;
+}
+
+ul {
+    margin-left: 20px;
+}
+
+/* CSS für das Navigationsmenü */
+nav {
+ display: flex;
+ justify-content: center;
+ padding: 10px 0;
+ border-radius: 15px;
+}
+
+/* CSS für die Links im Navigationsmenü */
+nav ul {
+ list-style-type: none;
+ margin: 0;
+ padding: 0;
+ display: flex;
+ justify-content: center;
+}
+
+/* CSS für die einzelnen Links */
+nav li {
+ margin: 0 10px;
+}
+
+/* CSS für die Box um jeden Link */
+nav li a {
+ display: inline-block; /* Macht den Link zu einem Inline-Block-Element */
+ padding: 10px 20px; /* Fügt Innenabstand hinzu */
+ background-color: #f05d23; /* Hintergrundfarbe der Box */
+ color: white; /* Textfarbe */
+ text-decoration: none; /* Entfernt den Unterstrich von Links */
+ border-radius: 5px; /* Fügt einen Border-Radius hinzu */
+ transition: background-color 0.3s ease; /* Übergangseffekt beim Überfahren */
+}
+
+nav li a:hover {
+ background-color: #bd491b;
+ color: #ffffff;
+ shadow: 0 0 10px black; /* Fügt einen Schatten hinzu */
+}
+
+/* Zweispaltiges Layout */
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    width: 80%; /* Anpassen der Breite nach Bedarf */
+    margin-top: 20px;
+}
+
+.main-content .left-column {
+    width: 60%; /* Anpassen der Breite nach Bedarf */
+}
+
+.main-content .right-column {
+    width: 30%; /* Anpassen der Breite nach Bedarf */
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .main-content .left-column,
+    .main-content .right-column {
+        width: 100%;
+    }
+}
+
+
+/* CSS für die Klassen */
+.right-column section .function {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.right-column section .attribute
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

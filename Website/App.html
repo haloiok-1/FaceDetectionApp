@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python GUI Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1><a href="Documentation Homepage.html">Person Detector Application</a></h1>
+        <p>Documentation of the App Class</p>
+    </header>
+
+    <div class="main-content">
+        <div class="left-column">
+            <h1>Class: App</h1>
+            <section>
+                <h2>General Function:</h2>
+                <p>
+                    The App class serves as the backbone of the Python GUI application. It encapsulates the core functionality and serves as the entry point for user interactions.
+                    By managing various components and modules, it provides a seamless experience for users to capture, train, and detect faces. The class ensures data integrity, user feedback, and system stability throughout the application lifecycle.
+                </p>
+            </section>
+        </div>
+        <div class="right-column">
+            <section class="explanation">
+                <h2>Functions:</h2>
+                <div class="function">
+                    <li><strong>import_csv_to_list(file_path)</strong>: A function that reads a CSV file and returns its content as a list of strings.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>check_if_camera_is_connected()</strong>: Checks if a camera is connected by attempting to capture a camera image.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>submit()</strong>: A method called when the user submits the form to capture a person. It validates the entered information and then saves it to a JSON file.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>change_directory()</strong>: A method called when the user wants to change the working directory. Opens a file selection dialog to choose a new working directory.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>saveInJSON()</strong>: A method that saves the entered person data to a JSON file.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>start_phototaker()</strong>: Starts the photo-taking mode to capture photos of the person.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>start_face_training()</strong>: Starts the face training mode to generate and train facial recognition data.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>worker_face_training(face_recognizer)</strong>: A helper method for face training that runs in the background and performs the training.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>start_facedetector()</strong>: Starts the face detection mode to recognize faces in real-time.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>showPersons()</strong>: Starts the GUI to display the captured persons.</li>
+                    </div>
+                    <div class="function">
+                        <li><strong>fn_amount_of_photos()</strong>: A method that counts the number of existing photos in the working directory.</li>
+                    </div>
+
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="https://github.com/haloiok-1/FaceDetectionApp">GitHub Repository</a>, </p>
+        <p>Copyright &copy; 2024 Czylonio. All rights reserved.</p>
+    </footer>
+</body>
+</html>

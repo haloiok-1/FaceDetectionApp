@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python GUI Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1><a href="Documentation Homepage.html">Person Detector Application</a></h1>
+        <p>Documentation of the FaceDetector Class</p>
+    </header>
+
+    <div class="main-content">
+        <div class="left-column">
+            <h1>Class: FaceDetector</h1>
+            <section>
+                <h2>General Function:</h2>
+                <p>
+                    The FaceDetector class is responsible for real-time face detection using OpenCV and Tkinter in Python. It captures video from the camera, detects faces, and performs facial recognition. The class provides a user-friendly interface for detecting and displaying recognized faces in real-time.
+                </p>
+            </section>
+        </div>
+        <div class="right-column">
+            <section class="explanation">
+                <h2>Functions:</h2>
+                <div class="function">
+                    <li><strong>__init__(parent, working_directory)</strong>: Initializes the FaceDetector object with the specified parent widget and working directory.</li>
+                </div>
+                <div class="function">
+                    <li><strong>detect_faces()</strong>: Performs face detection on the captured video stream using OpenCV and Haar cascades.</li>
+                </div>
+                <div class="function">
+                    <li><strong>display_camera_stream()</strong>: Displays the camera stream with detected faces in a Tkinter label widget.</li>
+                </div>
+                <div class="function">
+                    <li><strong>start()</strong>: Starts the FaceDetector application, initiating the Tkinter main loop.</li>
+                </div>
+                <div class="function">
+                    <li><strong>stop()</strong>: Stops the FaceDetector application and releases the camera resources.</li>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="https://github.com/haloiok-1/FaceDetectionApp">GitHub Repository</a>, </p>
+        <p>Copyright &copy; 2024 Czylonio. All rights reserved.</p>
+    </footer>
+</body>
+</html>

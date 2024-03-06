@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python GUI Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1><a href="Documentation Homepage.html">PersonGUI Documentation</a></h1>
+        <p>Documentation of the PersonGUI Class</p>
+    </header>
+
+    <div class="main-content">
+        <div class="left-column">
+            <h1>Class: PersonGUI</h1>
+            <section>
+                <h2>General Function:</h2>
+                <p>
+                    The PersonGUI class provides a graphical user interface for managing a list of known persons. It allows users to view the list of persons, open their photo folders, delete persons, and take photos of them using the integrated
+                    <a href="Phototaker.html">Phototaker</a> class.
+                </p>
+            </section>
+        </div>
+        <div class="right-column">
+            <section class="explanation">
+                <h2>Functions:</h2>
+                <div class="function">
+                    <li><strong>__init__(master, working_directory)</strong>: Initializes the PersonGUI object with the master window and the working directory.</li>
+                </div>
+                <div class="function">
+                    <li><strong>start()</strong>: Starts the PersonGUI application.</li>
+                </div>
+                <div class="function">
+                    <li><strong>get_persons()</strong>: Retrieves the list of known persons from the persons.json file.</li>
+                </div>
+                <div class="function">
+                    <li><strong>create_grid_for_persons()</strong>: Creates a grid layout to display information and options for each person.</li>
+                </div>
+                <div class="function">
+                    <li><strong>open_fileexplorer_for_person(person)</strong>: Opens the file explorer to view the photo folder of a specific person.</li>
+                </div>
+                <div class="function">
+                    <li><strong>delete_person(person)</strong>: Deletes a person from the list and their associated photo folder.</li>
+                </div>
+                <div class="function">
+                    <li><strong>open_photo_taker(person)</strong>: Opens the photo taker for a specific person.</li>
+                </div>
+                <div class="function">
+                    <li><strong>update_grid()</strong>: Updates the grid layout with the latest information.</li>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="https://github.com/haloiok-1/FaceDetectionApp">GitHub Repository</a>, </p>
+        <p>Copyright &copy; 2024 Czylonio. All rights reserved.</p>
+    </footer>
+</body>
+</html>

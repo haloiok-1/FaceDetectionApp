@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Person Detector Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+    <h1>Person Detector Application</h1>
+        <p class="explanation">A Tkinter-based application for detecting and managing person information.</p>
+    <nav>
+        <ul>
+            <li><a href="#dependencies">Dependencies</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#Documentations">Documentation</a></li>
+        </ul>
+    </nav>
+
+    </header>
+    <div class="main-content">
+        <div class="left-column">
+            <h1>Overall Information</h1>
+            <!-- Abschnitte, die auf der linken Seite angezeigt werden sollen -->
+            <section id="dependencies">
+                <h2>Dependencies</h2>
+                <p class="explanation">This application requires the following Python libraries:</p>
+            <ul>
+                <h3>Internal Libraries</h3>
+                <li>os</li>
+                <li>json</li>
+                <li>csv</li>
+
+                <h3>External Libraries</h3>
+                <li><a href="https://opencv.org/get-started/" >OpenCV</a></li>
+                <li><a href="https://docs.python.org/3/library/tkinter.html">Tkinter</a></li>
+                <li><a href="https://pypi.org/project/pillow/">Pillow</a></li>
+            </ul>
+
+            </section>
+            <section id="features">
+                <h2>Features</h2>
+                <p class="explanation">The application offers a comprehensive range of functionalities designed to streamline your experience:</p>
+                <ul>
+                    <li>Verify camera connectivity with a quick check, ensuring seamless interaction with camera-related features.</li>
+                    <li>Efficiently submit and store comprehensive person information, including name, last name, age, and gender, for robust data management.</li>
+                    <li>Customize the working directory for photo storage, providing flexibility and organization tailored to your preferences.</li>
+                    <li>Initiate face training procedures to optimize facial recognition accuracy, enabling precise identification in various scenarios.</li>
+                    <li>Activate face detection functionalities to effortlessly identify and track faces within images or live camera feeds, enhancing security and usability.</li>
+                </ul>
+            </section>
+            <section id="installation">
+                <h2>Installation</h2>
+                <p class="explanation">To run the application, follow these steps:</p>
+                <ol>
+                    <li>Ensure Python is installed on your system.</li>
+                    <li>Install the required libraries using pip:</li>
+                    <p class = "simpleInfo">! If you are able to run Shell scripts navigate to the folder and run installation.sh !</p>
+                    <pre><code>pip install opencv-python, opencv-contrib-python</code></pre>
+                    <pre><code>pip install pillow</code></pre>
+                    <pre><code>pip install tk</code></pre>
+                    <li>Download or clone the repository.</li>
+                    <pre><a href="https://github.com/haloiok-1/FaceDetectionApp">FaceDetectionApp</a> on GitHub</pre>
+                    <pre><code>git clone https://github.com/haloiok-1/FaceDetectionApp</code></pre>
+                    <li>Navigate to the application's directory and run the script:</li>
+                    <pre><code>python main.py</code></pre>
+                </ol>
+            </section>
+        </div>
+        <div class="right-column">
+            <!-- Abschnitt "Functions", der auf der rechten Seite angezeigt werden soll -->
+            <section id="functions">
+                <h1>Documentation</h1>
+
+                <div class ="classes">
+                    <a href="App.html">
+                        <h2>App</h2>
+                        <p class="explanation">The main application class.</p>
+                    </a>
+                </div>
+
+                <div class = "classes">
+                    <a href="FaceDetector.html">
+                        <h2>FaceDetector</h2>
+                        <p class="explanation">The class for detecting faces in images.</p>
+                    </a>
+                </div>
+
+                <div class = "classes">
+                    <a href="Trainer.html">
+                        <h2>Trainer</h2>
+                        <p class="explanation">The class for training the detection modell.</p>
+                    </a>
+                </div>
+
+                <div class = "classes">
+                    <a href="Phototaker.html">
+                        <h2>Phototaker</h2>
+                        <p class="explanation">The class for taking photos to get data to train the modell.</p>
+                    </a>
+                </div>
+
+                <div class = "classes">
+                    <a href="Person.html">
+                        <h2>Person</h2>
+                        <p class="explanation">The class for managing person information.</p>
+                    </a>
+                </div>
+
+                <div class = "classes">
+                    <a href="PersonGUI.html">
+                        <h2>PersonGUI</h2>
+                        <p class="explanation">The class for the graphical user interface.</p>
+                    </a>
+                </div>
+
+
+
+            </section>
+        </div>
+    </div>
+    <footer>
+        <p><a href="https://github.com/haloiok-1/FaceDetectionApp">GitHub Repository</a>, </p>
+        <p>Copyright &copy; 2024 Czylonio. All rights reserved.</p>
+    </footer>
+</body>

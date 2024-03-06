@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python GUI Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1><a href="Documentation Homepage.html">Person Detector Application</a></h1>
+        <p>Documentation of the Phototaker Class</p>
+    </header>
+
+    <div class="main-content">
+        <div class="left-column">
+            <h1>Class: Phototaker</h1>
+            <section>
+                <h2>General Function:</h2>
+                <p>
+                    The Phototaker class provides functionality to capture photos using the computer's camera. It allows users to take photos, set profile pictures, and save them to a specified directory. The class displays the camera stream in a tkinter window and enables users to interact with the camera through buttons.
+                </p>
+            </section>
+        </div>
+        <div class="right-column">
+            <section class="explanation">
+                <h2>Functions:</h2>
+                <div class="function">
+                    <li><strong>__init__(parent, person, directory_path)</strong>: Initializes the Phototaker object with the parent window, person information, and directory path for storing photos.</li>
+                </div>
+                <div class="function">
+                    <li><strong>start()</strong>: Starts the photo-taking process and displays the camera stream.</li>
+                </div>
+                <div class="function">
+                    <li><strong>display_camera_stream()</strong>: Displays the camera stream in the tkinter window and detects faces in real-time.</li>
+                </div>
+                <div class="function">
+                    <li><strong>take_photos()</strong>: Initiates the process of taking photos.</li>
+                </div>
+                <div class="function">
+                    <li><strong>worker_take_photos()</strong>: Worker function to capture photos in a separate thread.</li>
+                </div>
+                <div class="function">
+                    <li><strong>save_photos()</strong>: Saves the captured photos to the specified directory.</li>
+                </div>
+                <div class="function">
+                    <li><strong>current_amount_of_photos()</strong>: Returns the current number of photos in the photo directory.</li>
+                </div>
+                <div class="function">
+                    <li><strong>set_profile_pic()</strong>: Sets the captured photo as the profile picture for the person and updates the JSON file accordingly.</li>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="https://github.com/haloiok-1/FaceDetectionApp">GitHub Repository</a>, </p>
+        <p>Copyright &copy; 2024 Czylonio. All rights reserved.</p>
+    </footer>
+</body>
+</html>
