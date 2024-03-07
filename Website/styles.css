@@ -66,14 +66,16 @@ pre {
     border: 1px solid #ddd;
     border-radius: 5px;
     max-width: 60%;
-    font-size: 14px;+
+    font-size: 14px;
+    overflow-x:auto;
     margin-top: 4px;
 
 }
 
 code {
     font-family: cascadia code, monospace;
-
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .classes {
