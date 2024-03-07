@@ -78,7 +78,10 @@ class Trainer:
         # statistics for the bad photos
         print(f"[Trainer]: Amount of bad photos: {self.amount_bad_photos} out of {self.amount_of_photos}")
         # print the percentage of bad photos
-        print(f"[Trainer]: Percentage of bad photos: {self.amount_bad_photos / self.amount_of_photos * 100}%")
+        try:
+            print(f"[Trainer]: Percentage of bad photos: {self.amount_bad_photos / self.amount_of_photos * 100}%")
+        except ZeroDivisionError:
+            print("[Trainer]: No photos found")
 
     def check_data(self):
         if len(self.x_train) == 0 or len(self.y_labels) == 0:
