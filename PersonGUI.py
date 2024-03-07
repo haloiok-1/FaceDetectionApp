@@ -12,6 +12,12 @@ from Person import Person, dict_to_person
 import json
 
 
+def createPersonsJSON(working_directory):
+    with open(working_directory + "persons.json", "w") as file:
+        json.dump([], file, indent=4)
+    print(f"[PersonGUI]: Created persons.json file at {working_directory}")
+
+
 class PersonGUI:
 
     def __init__(self, master, working_directory: str):
@@ -86,8 +92,8 @@ class PersonGUI:
                 persons = json.load(file)
 
         except Exception as e:
-            if type(e) is  FileNotFoundError:
-                messagebox.showerror("Error", "Your persons.json file is missing. Please create it.")
+            if type(e) is FileNotFoundError:
+                createPersonsJSON(self.working_directory)
             if type(e) is PermissionError:
                 messagebox.showerror("Error", "You do not have permission to access the persons.json file.")
             if type(e) is json.decoder.JSONDecodeError:
@@ -123,7 +129,9 @@ class PersonGUI:
             photo_taker_button = tk.Button(self.grid_frame, text="Take Photos",
                                            command=lambda p=p: self.open_photo_taker(p),
                                            padx=0, pady=10, bg=("#32936F"))
-            if not camera_connected: photo_taker_button.config(state="disabled")
+            if not camera_connected:
+                photo_taker_button.config(state="disabled")
+
             photo_taker_button.grid(row=i, column=4)
 
             # label for amount of photos in folder
@@ -175,11 +183,12 @@ class PersonGUI:
 
 
 def check_if_camera_is_connected() -> bool:
-    try:
-        check, img = cv2.VideoCapture(0)  # check if the camera is connected
-        return check
-    except:
-        return True
+    img = cv2.VideoCapture(0)  # check if the camera is connected
+    check = img.isOpened()
+    img.release()
+    return check
+
+
 
 
 if __name__ == "__main__":

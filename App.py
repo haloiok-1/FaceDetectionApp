@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import json
@@ -30,16 +31,11 @@ def import_csv_to_list(file_path) -> list[str]:
 
 
 def check_if_camera_is_connected() -> bool:
-    try:
-        check, img = cv2.VideoCapture(0)  # check if the camera is connected
-        if check:
-            print("[App]: Camera is connected")
+    img = cv2.VideoCapture(0)  # check if the camera is connected
+    check = img.isOpened()
+    img.release()
+    return check
 
-        return check
-
-    except Exception as e:
-        print(f"[App]: {e}")
-        return True
 
 
 def open_documentation() -> None:
